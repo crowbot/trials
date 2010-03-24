@@ -1,0 +1,81 @@
+# == Schema Information
+# Schema version: 20100318145341
+#
+# Table name: clinical_trials
+#
+#  id                            :integer(11)     not null, primary key
+#  url                           :string(255)
+#  nct_id                        :string(255)
+#  org_study_id                  :string(255)
+#  secondary_ids                 :string(255)
+#  brief_title                   :string(255)
+#  official_title                :string(255)
+#  source                        :string(255)
+#  has_data_monitoring_committee :boolean(1)
+#  summary                       :text
+#  overall_status                :string(255)
+#  start_date                    :date
+#  end_date                      :date
+#  completion_date               :string(255)
+#  completion_date_type          :string(255)
+#  primary_completion_date       :string(255)
+#  primary_completion_date_type  :string(255)
+#  phase                         :string(255)
+#  study_type                    :string(255)
+#  study_design                  :string(255)
+#  enrollment                    :integer(11)
+#  enrollment_type               :string(255)
+#  condition_id                  :integer(11)
+#  created_at                    :datetime
+#  updated_at                    :datetime
+#
+
+# Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
+
+one:
+  url: MyString
+  nct_id: MyString
+  org_study_id: MyString
+  secondary_ids: MyString
+  brief_title: MyString
+  official_title: MyString
+  source: MyString
+  has_data_monitoring_committee: false
+  summary: MyText
+  overall_status: MyString
+  start_date: 2010-03-18
+  end_date: 2010-03-18
+  completion_date: MyString
+  completion_date_type: MyString
+  primary_completion_date: MyString
+  primary_completion_date_type: MyString
+  phase: MyString
+  study_type: MyString
+  study_design: MyString
+  enrollment: 1
+  enrollment_type: MyString
+  condition_id: 1
+
+two:
+  url: MyString
+  nct_id: MyString
+  org_study_id: MyString
+  secondary_ids: MyString
+  brief_title: MyString
+  official_title: MyString
+  source: MyString
+  has_data_monitoring_committee: false
+  summary: MyText
+  overall_status: MyString
+  start_date: 2010-03-18
+  end_date: 2010-03-18
+  completion_date: MyString
+  completion_date_type: MyString
+  primary_completion_date: MyString
+  primary_completion_date_type: MyString
+  phase: MyString
+  study_type: MyString
+  study_design: MyString
+  enrollment: 1
+  enrollment_type: MyString
+  condition_id: 1

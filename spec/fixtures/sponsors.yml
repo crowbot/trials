@@ -1,0 +1,11 @@
+# Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
+
+one:
+  agency_id: 1
+  clinical_trial_id: 1
+  role: MyString
+
+two:
+  agency_id: 1
+  clinical_trial_id: 1
+  role: MyString
