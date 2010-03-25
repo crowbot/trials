@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20100322211114) do
+ActiveRecord::Schema.define(:version => 20100324221129) do
 
   create_table "agencies", :force => true do |t|
     t.string   "name"
@@ -34,8 +34,8 @@ ActiveRecord::Schema.define(:version => 20100322211114) do
     t.boolean  "has_data_monitoring_committee"
     t.text     "summary"
     t.string   "overall_status"
-    t.date     "start_date"
-    t.date     "end_date"
+    t.string   "start_date"
+    t.string   "end_date"
     t.string   "completion_date"
     t.string   "completion_date_type"
     t.string   "primary_completion_date"
@@ -49,6 +49,27 @@ ActiveRecord::Schema.define(:version => 20100322211114) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.string   "why_stopped"
+    t.integer  "number_of_arms",                :limit => 11
+    t.integer  "number_of_groups",              :limit => 11
+  end
+
+  create_table "outcomes", :force => true do |t|
+    t.string   "outcome_type"
+    t.string   "measure"
+    t.string   "time_frame"
+    t.string   "safety_issue"
+    t.string   "description"
+    t.integer  "clinical_trial_id", :limit => 11
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "overall_officials", :force => true do |t|
+    t.string   "name"
+    t.string   "role"
+    t.integer  "agency_id",  :limit => 11
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
   create_table "overseers", :force => true do |t|
