@@ -31,10 +31,10 @@ class TrialsParser
     phase = (doc/:phase).text
     start_date = (doc/:start_date).text
     end_date = (doc/:end_date).text
-    completion_date = doc.at('completion_date').inner_text
-    completion_date_type = doc.at('completion_date').attributes['type']
-    primary_completion_date = doc.at('primary_completion_date').inner_text
-    primary_completion_date_type = doc.at('primary_completion_date').attributes['type']
+    completion_date = doc.at('completion_date') ? doc.at('completion_date').inner_text : nil
+    completion_date_type = doc.at('completion_date') ? doc.at('completion_date').attributes['type'] : nil
+    primary_completion_date = doc.at('primary_completion_date') ? doc.at('primary_completion_date').inner_text : nil
+    primary_completion_date_type = doc.at('primary_completion_date') ? doc.at('primary_completion_date').attributes['type'] : nil
     phase = (doc/:phase).text
     study_type = (doc/:study_type).text
     study_design = (doc/:study_design).text
@@ -86,7 +86,8 @@ class TrialsParser
         overall_official.agency_id = agency.id
       end
       overall_official.save!
-    end                             
+    end             
+    # TODO NEED TO ADD OVERALL_CONTACT SECTION                
     if doc.search('primary_outcome')
       primary_outcome = Outcome.new(:clinical_trial_id => trial.id, 
                                     :outcome_type => 'primary', 
@@ -127,9 +128,58 @@ class TrialsParser
                                   :clinical_trial_id => trial.id, 
                                   :role => 'lead')
     collaborator_elements.each do |collaborator|
-      collaborator_name = collaborator.text
+      collaborator_name = collaborator.inner_text
       agency = Agency.find_or_create_by_name(collaborator_name)
     end
+    doc.search("location").each do |location|
+      facility_name = location.at("facility name") ? location.at("facility name").inner_text : nil
+      address = location.at("address")
+      city = address.at('city').inner_text
+      state = address.at('state') ? address.at('state').inner_text : nil
+      zip = address.at('zip') ? address.at('zip').inner_text : nil
+      country = address.at('country').inner_text
+      status = location.at('status').inner_text
+
+      facility = Facility.create(:name => facility_name, 
+                                 :city => city,
+                                 :state => state, 
+                                 :zip => zip, 
+                                 :country => country)
+       if contact = location.at('contact')
+         last_name = contact.at('last_name').inner_text
+         phone = contact.at('phone').inner_text
+         phone_ext = contact.at('phone_ext').inner_text
+         email = contact.at('email').inner_text
+         contact = Contact.create(:last_name => last_name,
+                                  :phone => phone,
+                                  :phone_ext => phone_ext,
+                                  :email => email)
+       end
+       if backup_contact = location.at('contact_backup')
+         last_name = backup_contact.at('last_name').inner_text
+         phone = backup_contact.at('phone').inner_text
+         phone_ext = backup_contact.at('phone_ext').inner_text
+         email = backup_contact.at('email').inner_text
+         backup_contact = Contact.create(:last_name => last_name,
+                                  :phone => phone,
+                                  :phone_ext => phone_ext,
+                                  :email => email)
+       end
+       location_model = Location.create(:facility_id => facility.id, 
+                                        :trial_id => trial.id, 
+                                        :status => status,
+                                        :contact => contact,
+                                        :backup_contact => backup_contact)
+       location.search('investigator').each do |investigator|
+         if investigator.at('role')
+           role = investigator.at('role').inner_text
+         else
+           role = nil
+         end
+         Investigator.create(:last_name => investigator.at("last_name").text, 
+                             :role => role,
+                             :location_id => location_model.id)
+       end
+    end
   end
-  
 end

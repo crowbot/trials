@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20100324221129) do
+ActiveRecord::Schema.define(:version => 20100325201654) do
 
   create_table "agencies", :force => true do |t|
     t.string   "name"
@@ -51,6 +51,44 @@ ActiveRecord::Schema.define(:version => 20100324221129) do
     t.string   "why_stopped"
     t.integer  "number_of_arms",                :limit => 11
     t.integer  "number_of_groups",              :limit => 11
+  end
+
+  create_table "contacts", :force => true do |t|
+    t.string   "contact_type"
+    t.string   "last_name"
+    t.string   "phone"
+    t.string   "phone_ext"
+    t.string   "email"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "facilities", :force => true do |t|
+    t.string   "name"
+    t.string   "city"
+    t.string   "state"
+    t.string   "country"
+    t.string   "zip"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "investigators", :force => true do |t|
+    t.string   "last_name"
+    t.string   "role"
+    t.integer  "location_id", :limit => 11
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "locations", :force => true do |t|
+    t.integer  "facility_id",       :limit => 11
+    t.integer  "trial_id",          :limit => 11
+    t.string   "status"
+    t.integer  "contact_id",        :limit => 11
+    t.integer  "backup_contact_id", :limit => 11
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
   create_table "outcomes", :force => true do |t|
