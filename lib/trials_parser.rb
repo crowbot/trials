@@ -63,8 +63,8 @@ class TrialsParser
     else
       enrollment_type = nil
     end
-    verification_date = doc.at('verification_date').inner_text
-    firstreceived_date = doc.at('firstreceived_date').inner_text
+    verification_date = doc.at('verification_date') ? doc.at('verification_date').inner_text : nil
+    firstreceived_date = doc.at('firstreceived_date') ? doc.at('firstreceived_date').inner_text : nil
     lastchanged_date = doc.at('lastchanged_date') ? doc.at('lastchanged_date').inner_text : nil
     trial = ClinicalTrial.create!(:url => url, 
                                  :nct_id => nct_id, 
