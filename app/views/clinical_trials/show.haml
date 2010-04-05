@@ -44,7 +44,8 @@
       %b= "Overall official:"
       =@trial.overall_official.name 
       ="(#{@trial.overall_official.role})"
-      =@trial.overall_official.agency.name
+      - if @trial.overall_official.agency
+        =@trial.overall_official.agency.name
   - if @trial.overall_contact
     .overall_contact
       %b= "Overall contact:"
