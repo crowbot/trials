@@ -4,7 +4,7 @@ class CreateOverallOfficials < ActiveRecord::Migration
       t.string :name
       t.string :role
       t.integer :agency_id
-
+      t.integer :clinical_trial_id
       t.timestamps
     end
   end
