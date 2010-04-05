@@ -5,6 +5,19 @@ class TrialsParser
   def initialize  
   end
   
+  def parse_contact contact_element, container_element
+    if contact = container_element.at(contact_element)
+      last_name = contact.at('last_name') ? contact.at('last_name').inner_text : nil
+      phone = contact.at('phone') ? contact.at('phone').inner_text : nil
+      phone_ext = contact.at('phone_ext') ? contact.at('phone_ext').inner_text : nil
+      email = contact.at('email') ? contact.at('email').inner_text : nil
+      contact_model = Contact.create!(:last_name => last_name, 
+                                      :phone => phone,
+                                      :phone_ext => phone_ext, 
+                                      :email => email)
+    end
+  end
+  
   def parse_file(file_path)
     xml = File.read(file_path)
     doc = Hpricot::XML(xml)
@@ -50,7 +63,10 @@ class TrialsParser
     else
       enrollment_type = nil
     end
-    trial = ClinicalTrial.create(:url => url, 
+    verification_date = doc.at('verification_date').inner_text
+    firstreceived_date = doc.at('firstreceived_date').inner_text
+    lastchanged_date = doc.at('lastchanged_date') ? doc.at('lastchanged_date').inner_text : nil
+    trial = ClinicalTrial.create!(:url => url, 
                                  :nct_id => nct_id, 
                                  :org_study_id => org_study_id,
                                  :brief_title => brief_title,
@@ -73,10 +89,15 @@ class TrialsParser
                                  :number_of_arms => number_of_arms,
                                  :number_of_groups => number_of_groups,
                                  :enrollment => enrollment,
-                                 :enrollment_type => enrollment_type
+                                 :enrollment_type => enrollment_type, 
+                                 :verification_date => verification_date,
+                                 :firstreceived_date => firstreceived_date, 
+                                 :lastchanged_date => lastchanged_date
                                  )
+    raise unless trial.id
     doc.search('overall_official').each do |official|
-      overall_official = OverallOfficial.new(:name => official.at('last_name').inner_text)
+      overall_official = OverallOfficial.new(:name => official.at('last_name').inner_text,
+                                             :clinical_trial_id => trial.id)
       if official.at('role')
         overall_official.role = official.at('role').inner_text
       end
@@ -86,8 +107,17 @@ class TrialsParser
         overall_official.agency_id = agency.id
       end
       overall_official.save!
-    end             
-    # TODO NEED TO ADD OVERALL_CONTACT SECTION                
+    end         
+    
+    if overall_contact = parse_contact('overall_contact', doc)
+      trial.overall_contact = contact
+      trial.save!
+    end
+    if overall_contact_backup = parse_contact('overall_contact_backup', doc)
+      trial.overall_contact_backup = contact
+      trial.save!
+    end
+              
     if doc.search('primary_outcome')
       primary_outcome = Outcome.new(:clinical_trial_id => trial.id, 
                                     :outcome_type => 'primary', 
@@ -134,7 +164,7 @@ class TrialsParser
     doc.search("location").each do |location|
       facility_name = location.at("facility name") ? location.at("facility name").inner_text : nil
       address = location.at("address")
-      city = address.at('city').inner_text
+      city = address.at('city') ? address.at('city').inner_text : nil
       state = address.at('state') ? address.at('state').inner_text : nil
       zip = address.at('zip') ? address.at('zip').inner_text : nil
       country = address.at('country').inner_text
@@ -145,26 +175,8 @@ class TrialsParser
                                  :state => state, 
                                  :zip => zip, 
                                  :country => country)
-       if contact = location.at('contact')
-         last_name = contact.at('last_name').inner_text
-         phone = contact.at('phone').inner_text
-         phone_ext = contact.at('phone_ext').inner_text
-         email = contact.at('email').inner_text
-         contact = Contact.create(:last_name => last_name,
-                                  :phone => phone,
-                                  :phone_ext => phone_ext,
-                                  :email => email)
-       end
-       if backup_contact = location.at('contact_backup')
-         last_name = backup_contact.at('last_name').inner_text
-         phone = backup_contact.at('phone').inner_text
-         phone_ext = backup_contact.at('phone_ext').inner_text
-         email = backup_contact.at('email').inner_text
-         backup_contact = Contact.create(:last_name => last_name,
-                                  :phone => phone,
-                                  :phone_ext => phone_ext,
-                                  :email => email)
-       end
+       contact = parse_contact('contact', location)
+       backup_contact = parse_contact('contact_backup', location)
        location_model = Location.create(:facility_id => facility.id, 
                                         :trial_id => trial.id, 
                                         :status => status,
@@ -179,6 +191,13 @@ class TrialsParser
          Investigator.create(:last_name => investigator.at("last_name").text, 
                              :role => role,
                              :location_id => location_model.id)
+       end
+       if responsible_party = doc.at('responsible_party')
+         name = responsible_party.at('name_title') ? responsible_party.at('name_title').inner_text : nil
+         organization = responsible_party.at('organization') ? responsible_party.at('organization').inner_text : nil
+         party = ResponsibleParty.create(:name_title => name,
+                                         :organization => organization,
+                                         :clinical_trial_id => trial.id)
        end
     end
   end
