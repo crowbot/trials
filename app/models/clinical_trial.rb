@@ -32,4 +32,12 @@
 
 class ClinicalTrial < ActiveRecord::Base
   has_many :sponsors
+  has_one :lead_sponsor, :class_name => 'Sponsor', :conditions => "role = 'lead'"
+  belongs_to :overall_contact, :class_name => 'Contact'
+  belongs_to :overall_contact_backup, :class_name => 'Contact'
+  has_one :overall_official
+  has_many :locations, :foreign_key => :trial_id
+  def self.per_page
+    20
+  end
 end

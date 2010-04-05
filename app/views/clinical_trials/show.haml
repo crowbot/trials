@@ -1,0 +1,53 @@
+%h3.trial-brief-title= @trial.brief_title
+.trial-information
+  .overall-status
+    %b= "Overall status:"
+    =@trial.overall_status
+  .first-received-date
+    %b="First received:"
+    =@trial.firstreceived_date
+  .last-changed-date
+    %b="Last changed:"
+    =@trial.lastchanged_date
+  .sponsor
+    %b="Lead Sponsor:"
+    =@trial.lead_sponsor.agency.name
+  .nct-id
+    %b= "ClinicalTrials.gov identifier:"
+    =@trial.nct_id
+  .org-study-id
+    %b= "Org. study ID:"
+    =@trial.org_study_id
+  .source
+    %b= "Source:"
+    =@trial.source
+  .summary
+    %b= "Summary:"
+    =@trial.summary
+  .study_type
+    %b= "Study type:"
+    =@trial.study_type
+  .study_design
+    %b= "Study design:"
+    =@trial.study_design
+  .phase
+    %b= "Phase:"
+    =@trial.phase
+  .start_date
+    %b= "Start date:"
+    =@trial.start_date
+  .completion_date
+    %b= "Completion date:"
+    =@trial.completion_date 
+  - if @trial.overall_official
+    .overall_official
+      %b= "Overall official:"
+      =@trial.overall_official.name 
+      ="(#{@trial.overall_official.role})"
+      =@trial.overall_official.agency.name
+  - if @trial.overall_contact
+    .overall_contact
+      %b= "Overall contact:"
+  .locations
+    %b= "Locations"    
+  = render :partial => 'location', :collection => @trial.locations
