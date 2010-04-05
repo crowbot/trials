@@ -110,11 +110,11 @@ class TrialsParser
     end         
     
     if overall_contact = parse_contact('overall_contact', doc)
-      trial.overall_contact = contact
+      trial.overall_contact = overall_contact
       trial.save!
     end
     if overall_contact_backup = parse_contact('overall_contact_backup', doc)
-      trial.overall_contact_backup = contact
+      trial.overall_contact_backup = overall_contact_backup
       trial.save!
     end
               
