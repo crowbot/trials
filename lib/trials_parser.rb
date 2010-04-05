@@ -188,7 +188,7 @@ class TrialsParser
          else
            role = nil
          end
-         Investigator.create(:last_name => investigator.at("last_name").text, 
+         Investigator.create(:last_name => investigator.at("last_name").inner_text, 
                              :role => role,
                              :location_id => location_model.id)
        end
