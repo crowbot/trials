@@ -38,6 +38,10 @@
   .sponsor
     %b="Lead Sponsor:"
     =@trial.lead_sponsor.agency.name
+  .collaborators
+    %b="Collaborators:"
+    -@trial.collaborators.each do |collaborator|
+      = collaborator.agency.name
   .nct-id
     %b= "ClinicalTrials.gov identifier:"
     =@trial.nct_id
