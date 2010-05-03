@@ -9,3 +9,19 @@ body {
 .trial-information div {
   padding: 5px;
 }
+
+.trial-information .publication-status{
+  font-size: 1.2em;
+}
+
+.publication-status .found {
+  background-color: #E0FA71;
+}
+
+.publication-status .unknown {
+  background-color: #EEEEEE;
+}
+
+.publication-status .not-found {
+  background-color: #FF7E40;
+}
