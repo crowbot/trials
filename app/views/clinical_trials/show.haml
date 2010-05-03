@@ -1,5 +1,31 @@
 %h3.trial-brief-title= @trial.brief_title
 .trial-information
+  .publication-status
+    - if @trial.searched and @trial.articles.empty? 
+      .not-found
+        %b= "Publication status:"
+        We have searched PubMed and not found any publications
+    - elsif !@trial.searched
+      .unknown
+        %b= "Publication status:"
+        We have not yet searched PubMed
+    - else
+      .found
+        %b= "Publication status:"
+        We found the following publications: 
+        - @trial.articles.each do |article|
+          =link_to article.pubmed_id, "http://www.ncbi.nlm.nih.gov/pubmed/#{article.pubmed_id}"
+  .history 
+    %b= "Selected history:"
+    - changes = @trial.analyse_history
+    - if !changes
+      We have not yet analysed this trial's history for changes
+    - else  
+      - changes.keys.sort.each do |date|
+        .change-date
+        %b= date
+        - changes[date].keys.each do |key|
+          .change= "#{key.to_s.humanize} changed from '#{changes[date][key][:old]}' to '#{changes[date][key][:new]}'"
   .overall-status
     %b= "Overall status:"
     =@trial.overall_status
