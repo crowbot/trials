@@ -37,7 +37,36 @@ class ClinicalTrial < ActiveRecord::Base
   belongs_to :overall_contact_backup, :class_name => 'Contact'
   has_one :overall_official
   has_many :locations, :foreign_key => :trial_id
+  has_many :trial_mentions
+  has_many :articles, :through => :trial_mentions
   def self.per_page
     20
+  end
+  
+  def analyse_history
+    history_dir = File.join(HISTORY_PATH, nct_id)
+    if !File.exist?(history_dir)
+      return nil
+    end
+    trials_parser = TrialsParser.new
+    changes = {}
+    Dir.glob(File.join(history_dir, "*")).each do |filename|
+      date = File.basename(filename)
+      date = Date.parse(date.gsub('_', '/')).to_s(:long)
+      before = File.join(filename, "before.xml")
+      after = File.join(filename, "after.xml")
+      before_trial_attributes = trials_parser.get_trial_attributes(before)
+      after_trial_attributes = trials_parser.get_trial_attributes(after)
+
+      before_trial_attributes.each do |key, value|
+        was = before_trial_attributes[key]
+        now = after_trial_attributes[key]
+        if was != now
+          changes[date] = {} if ! changes[date]
+          changes[date][key] = {:old => was.strip, :new => now.strip}
+        end
+      end
+    end
+    changes
   end
 end
