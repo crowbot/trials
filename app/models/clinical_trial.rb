@@ -65,7 +65,7 @@ class ClinicalTrial < ActiveRecord::Base
         if was != now
           changes[date] = {} if ! changes[date]
           was = was ? was.strip : was 
-          now = now ? now.string : now
+          now = now ? now.strip : now
           changes[date][key] = {:old => was.strip, :new => now.strip}
         end
       end
