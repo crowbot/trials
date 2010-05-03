@@ -1,0 +1,1 @@
+HISTORY_PATH = "data/histories"
