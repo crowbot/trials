@@ -18,7 +18,7 @@ class TrialsParser
     end
   end
   
-  def parse_file(file_path)
+  def get_trial_attributes(file_path)
     xml = File.read(file_path)
     doc = Hpricot::XML(xml)
     url = (doc/:required_header/:url).text
@@ -26,9 +26,6 @@ class TrialsParser
     org_study_id = (doc/:org_study_id).text
     brief_title = (doc/:brief_title).text
     official_title = (doc/:official_title).text
-    lead_sponsor_name = (doc/:sponsors/:lead_sponsor/:agency).text
-    collaborator_elements = doc.at('sponsors').search('collaborator')
-    authorities = doc.at('oversight_info').search('authority')
     source = (doc/:source).text
     has_dmc = (doc/:oversight_info/:has_dmc).text
     if has_dmc == 'Yes'
@@ -39,7 +36,8 @@ class TrialsParser
       has_data_monitoring_committee = nil
     end
     summary = (doc/:brief_summary/:textblock).text
-    overall_status = (doc/:overall_status).text
+    status_element = (doc/:overall_status).empty? ? (doc/:status_block/:status) : (doc/:overall_status)
+    overall_status = status_element.text
     why_stopped = (doc/:why_stopped).text
     phase = (doc/:phase).text
     start_date = (doc/:start_date).text
@@ -66,34 +64,40 @@ class TrialsParser
     verification_date = doc.at('verification_date') ? doc.at('verification_date').inner_text : nil
     firstreceived_date = doc.at('firstreceived_date') ? doc.at('firstreceived_date').inner_text : nil
     lastchanged_date = doc.at('lastchanged_date') ? doc.at('lastchanged_date').inner_text : nil
-    trial = ClinicalTrial.create!(:url => url, 
-                                 :nct_id => nct_id, 
-                                 :org_study_id => org_study_id,
-                                 :brief_title => brief_title,
-                                 :official_title => official_title,
-                                 :source => source, 
-                                 :has_data_monitoring_committee => has_data_monitoring_committee,
-                                 :summary => summary, 
-                                 :overall_status => overall_status,
-                                 :why_stopped => why_stopped, 
-                                 :phase => phase,
-                                 :start_date => start_date, 
-                                 :end_date => end_date,
-                                 :completion_date => completion_date,
-                                 :completion_date_type => completion_date_type,
-                                 :primary_completion_date => primary_completion_date,
-                                 :primary_completion_date_type => primary_completion_date_type,
-                                 :phase => phase,
-                                 :study_type => study_type, 
-                                 :study_design => study_design, 
-                                 :number_of_arms => number_of_arms,
-                                 :number_of_groups => number_of_groups,
-                                 :enrollment => enrollment,
-                                 :enrollment_type => enrollment_type, 
-                                 :verification_date => verification_date,
-                                 :firstreceived_date => firstreceived_date, 
-                                 :lastchanged_date => lastchanged_date
-                                 )
+    trial_attributes = {:url => url, 
+                       :nct_id => nct_id, 
+                       :org_study_id => org_study_id,
+                       :brief_title => brief_title,
+                       :official_title => official_title,
+                       :source => source, 
+                       :has_data_monitoring_committee => has_data_monitoring_committee,
+                       :summary => summary, 
+                       :overall_status => overall_status,
+                       :why_stopped => why_stopped, 
+                       :phase => phase,
+                       :start_date => start_date, 
+                       :end_date => end_date,
+                       :completion_date => completion_date,
+                       :completion_date_type => completion_date_type,
+                       :primary_completion_date => primary_completion_date,
+                       :primary_completion_date_type => primary_completion_date_type,
+                       :phase => phase,
+                       :study_type => study_type, 
+                       :study_design => study_design, 
+                       :number_of_arms => number_of_arms,
+                       :number_of_groups => number_of_groups,
+                       :enrollment => enrollment,
+                       :enrollment_type => enrollment_type, 
+                       :verification_date => verification_date,
+                       :firstreceived_date => firstreceived_date, 
+                       :lastchanged_date => lastchanged_date}
+  end
+  
+  def parse_file(file_path)
+    xml = File.read(file_path)
+    doc = Hpricot::XML(xml)
+    trial_attributes = get_trial_attributes(file_path)
+    trial = ClinicalTrial.create!(trial_attributes)
     raise unless trial.id
     doc.search('overall_official').each do |official|
       overall_official = OverallOfficial.new(:name => official.at('last_name').inner_text,
@@ -133,6 +137,7 @@ class TrialsParser
       end
       primary_outcome.save!
     end
+    
     if doc.search('secondary_outcome')
       secondary_outcome = Outcome.new(:clinical_trial_id => trial.id, 
                                     :outcome_type => 'secondary', 
@@ -148,18 +153,29 @@ class TrialsParser
       end
       secondary_outcome.save!
     end
+    authorities = doc.at('oversight_info').search('authority')
     authorities.each do |authority_name|
       authority = Authority.create(:name => authority_name.inner_text)
       Overseer.create(:authority_id => authority.id, 
                       :clinical_trial_id => trial.id)
     end                          
+    if doc.at('study_sponsor')
+      sponsor_element = :study_sponsor
+    else
+      sponsor_element = :sponsors
+    end
+    lead_sponsor_name = (doc/sponsor_element/:lead_sponsor/:agency).text
     agency = Agency.find_or_create_by_name(lead_sponsor_name)
+    collaborator_elements = doc.at(sponsor_element).search('collaborator')
     lead_sponsor = Sponsor.create(:agency_id => agency.id, 
                                   :clinical_trial_id => trial.id, 
                                   :role => 'lead')
     collaborator_elements.each do |collaborator|
       collaborator_name = collaborator.inner_text
       agency = Agency.find_or_create_by_name(collaborator_name)
+      collaborator = Sponsor.create(:agency_id => agency.id, 
+                                    :clinical_trial_id => trial.id, 
+                                    :role => 'collaborator')
     end
     doc.search("location").each do |location|
       facility_name = location.at("facility name") ? location.at("facility name").inner_text : nil
