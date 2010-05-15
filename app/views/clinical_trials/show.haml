@@ -3,20 +3,20 @@
   .publication-status
     - if @trial.searched and @trial.articles.empty? 
       .not-found
-        %b= "Publication status:"
+        %b Publication status:
         We have searched PubMed and not found any publications
     - elsif !@trial.searched
       .unknown
-        %b= "Publication status:"
+        %b Publication status:
         We have not yet searched PubMed
     - else
       .found
-        %b= "Publication status:"
+        %b Publication status:
         We found the following publications: 
         - @trial.articles.each do |article|
           =link_to article.pubmed_id, "http://www.ncbi.nlm.nih.gov/pubmed/#{article.pubmed_id}"
   .history 
-    %b= "Selected history:"
+    %b Selected history:
     - changes = @trial.analyse_history
     - if !changes
       We have not yet analysed this trial's history for changes
@@ -27,58 +27,58 @@
         - changes[date].keys.each do |key|
           .change= "#{key.to_s.humanize} changed from '#{changes[date][key][:old]}' to '#{changes[date][key][:new]}'"
   .overall-status
-    %b= "Overall status:"
+    %b Overall status:
     =@trial.overall_status
   .first-received-date
-    %b="First received:"
+    %b First received:
     =@trial.firstreceived_date
   .last-changed-date
-    %b="Last changed:"
+    %b Last changed:
     =@trial.lastchanged_date
   .sponsor
-    %b="Lead Sponsor:"
+    %b Lead Sponsor:
     =@trial.lead_sponsor.agency.name
   .collaborators
-    %b="Collaborators:"
+    %b Collaborators:
     -@trial.collaborators.each do |collaborator|
       = collaborator.agency.name
   .nct-id
-    %b= "ClinicalTrials.gov identifier:"
+    %b ClinicalTrials.gov identifier:
     =@trial.nct_id
   .org-study-id
-    %b= "Org. study ID:"
+    %b Org. study ID:
     =@trial.org_study_id
   .source
-    %b= "Source:"
+    %b Source: 
     =@trial.source
   .summary
-    %b= "Summary:"
+    %b Summary:
     =@trial.summary
   .study_type
-    %b= "Study type:"
+    %b Study type:
     =@trial.study_type
   .study_design
-    %b= "Study design:"
+    %b Study design:
     =@trial.study_design
   .phase
-    %b= "Phase:"
+    %b Phase:
     =@trial.phase
   .start_date
-    %b= "Start date:"
+    %b Start date:
     =@trial.start_date
   .completion_date
-    %b= "Completion date:"
+    %b Completion date:
     =@trial.completion_date 
   - if @trial.overall_official
     .overall_official
-      %b= "Overall official:"
+      %b Overall official:
       =@trial.overall_official.name 
       ="(#{@trial.overall_official.role})"
       - if @trial.overall_official.agency
         =@trial.overall_official.agency.name
   - if @trial.overall_contact
     .overall_contact
-      %b= "Overall contact:"
+      %b Overall contact:
   .locations
-    %b= "Locations"    
+    %b Locations
   = render :partial => 'location', :collection => @trial.locations
