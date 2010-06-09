@@ -1,5 +1,8 @@
 require 'hpricot'
-
+# Fast-and loose parser for clinical trials data in XML format - one trial per file, as available
+# from clinicaltrials.gov. 
+# TODO: Needs proper checking against http://clinicaltrials.gov/ct2/html/images/info/public.dtd
+# TODO: Should probably just yield up unsaved objects
 class TrialsParser
 
   def initialize  
@@ -97,6 +100,8 @@ class TrialsParser
     xml = File.read(file_path)
     doc = Hpricot::XML(xml)
     trial_attributes = get_trial_attributes(file_path)
+    existing = ClinicalTrial.find_by_nct_id(attributes[:nct_id])
+    return if existing
     trial = ClinicalTrial.create!(trial_attributes)
     raise unless trial.id
     doc.search('overall_official').each do |official|
