@@ -100,8 +100,13 @@ class TrialsParser
     xml = File.read(file_path)
     doc = Hpricot::XML(xml)
     trial_attributes = get_trial_attributes(file_path)
-    existing = ClinicalTrial.find_by_nct_id(attributes[:nct_id])
-    return if existing
+    existing = ClinicalTrial.find_by_nct_id(trial_attributes[:nct_id])
+    if existing
+      puts "Skipping #{trial_attributes[:nct_id]}"
+      return 
+    else
+      puts "Parsing #{trial_attributes[:nct_id]}"
+    end
     trial = ClinicalTrial.create!(trial_attributes)
     raise unless trial.id
     doc.search('overall_official').each do |official|
