@@ -40,10 +40,18 @@ class ClinicalTrial < ActiveRecord::Base
   has_many :locations, :foreign_key => :trial_id
   has_many :trial_mentions
   has_many :articles, :through => :trial_mentions
+  
   def self.per_page
     20
   end
   
+  named_scope :completed, :conditions => "completion_date is not null"
+  
+  named_scope :unpublished, :select => 'clinical_trials.*',
+                            :joins => ["LEFT OUTER JOIN trial_mentions 
+                                        ON clinical_trials.id = trial_mentions.clinical_trial_id"], 
+                            :conditions => "trial_mentions.id is NULL"
+
   def analyse_history
     history_dir = File.join(HISTORY_PATH, nct_id)
     if !File.exist?(history_dir)
