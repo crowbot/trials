@@ -9,10 +9,16 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20100325201654) do
+ActiveRecord::Schema.define(:version => 20100613154908) do
 
   create_table "agencies", :force => true do |t|
     t.string   "name"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "articles", :force => true do |t|
+    t.integer  "pubmed_id"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
@@ -43,14 +49,37 @@ ActiveRecord::Schema.define(:version => 20100325201654) do
     t.string   "phase"
     t.string   "study_type"
     t.string   "study_design"
-    t.integer  "enrollment",                    :limit => 11
+    t.integer  "enrollment"
     t.string   "enrollment_type"
-    t.integer  "condition_id",                  :limit => 11
+    t.integer  "condition_id"
     t.datetime "created_at"
     t.datetime "updated_at"
     t.string   "why_stopped"
-    t.integer  "number_of_arms",                :limit => 11
-    t.integer  "number_of_groups",              :limit => 11
+    t.integer  "number_of_arms"
+    t.integer  "number_of_groups"
+    t.integer  "overall_contact_id"
+    t.integer  "overall_contact_backup_id"
+    t.string   "verification_date"
+    t.string   "lastchanged_date"
+    t.string   "firstreceived_date"
+    t.integer  "responsible_party_id"
+    t.boolean  "searched"
+    t.string   "isrctn_id"
+    t.string   "ethics_approval"
+    t.string   "acronym"
+    t.string   "disease_condition"
+    t.text     "inclusion_criteria"
+    t.text     "exclusion_criteria"
+    t.text     "primary_outcome_measures"
+    t.text     "secondary_outcome_measures"
+    t.string   "patient_info_material"
+    t.string   "funding_sources"
+    t.string   "trial_website"
+    t.string   "publications"
+    t.string   "date_isrctn_assigned"
+    t.text     "interventions"
+    t.string   "countries_of_recruitment"
+    t.date     "completion_date_as_date"
   end
 
   create_table "contacts", :force => true do |t|
@@ -76,17 +105,17 @@ ActiveRecord::Schema.define(:version => 20100325201654) do
   create_table "investigators", :force => true do |t|
     t.string   "last_name"
     t.string   "role"
-    t.integer  "location_id", :limit => 11
+    t.integer  "location_id"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
 
   create_table "locations", :force => true do |t|
-    t.integer  "facility_id",       :limit => 11
-    t.integer  "trial_id",          :limit => 11
+    t.integer  "facility_id"
+    t.integer  "trial_id"
     t.string   "status"
-    t.integer  "contact_id",        :limit => 11
-    t.integer  "backup_contact_id", :limit => 11
+    t.integer  "contact_id"
+    t.integer  "backup_contact_id"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
@@ -97,7 +126,7 @@ ActiveRecord::Schema.define(:version => 20100325201654) do
     t.string   "time_frame"
     t.string   "safety_issue"
     t.string   "description"
-    t.integer  "clinical_trial_id", :limit => 11
+    t.integer  "clinical_trial_id"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
@@ -105,22 +134,38 @@ ActiveRecord::Schema.define(:version => 20100325201654) do
   create_table "overall_officials", :force => true do |t|
     t.string   "name"
     t.string   "role"
-    t.integer  "agency_id",  :limit => 11
+    t.integer  "agency_id"
+    t.integer  "clinical_trial_id"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
 
   create_table "overseers", :force => true do |t|
-    t.integer  "clinical_trial_id", :limit => 11
-    t.integer  "authority_id",      :limit => 11
+    t.integer  "clinical_trial_id"
+    t.integer  "authority_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "responsible_parties", :force => true do |t|
+    t.string   "name_title"
+    t.string   "organization"
+    t.integer  "clinical_trial_id"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
 
   create_table "sponsors", :force => true do |t|
-    t.integer  "agency_id",         :limit => 11
-    t.integer  "clinical_trial_id", :limit => 11
+    t.integer  "agency_id"
+    t.integer  "clinical_trial_id"
     t.string   "role"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "trial_mentions", :force => true do |t|
+    t.integer  "clinical_trial_id"
+    t.integer  "article_id"
     t.datetime "created_at"
     t.datetime "updated_at"
   end

@@ -52,6 +52,8 @@ class ClinicalTrial < ActiveRecord::Base
                                         ON clinical_trials.id = trial_mentions.clinical_trial_id"], 
                             :conditions => "trial_mentions.id is NULL"
 
+  named_scope :searched, :conditions => ['searched = ?', true]
+  
   def analyse_history
     history_dir = File.join(HISTORY_PATH, nct_id)
     if !File.exist?(history_dir)

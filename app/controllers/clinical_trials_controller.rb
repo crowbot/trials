@@ -1,7 +1,8 @@
 class ClinicalTrialsController < ApplicationController
   
   def index
-    @trials = ClinicalTrial.paginate(:all, :page => params[:page], :order => 'updated_at DESC')
+    @trials = ClinicalTrial.completed.searched.unpublished.paginate(:all, :page => params[:current_page], 
+                 :conditions => ['completion_date_as_date < ?', Time.now.beginning_of_month - 3.years])
   end
   
   def show
