@@ -1,0 +1,39 @@
+%h2 Search Trials
+
+<script>
+
+$(document).ready(function(){
+var data = "Core Selectors Attributes Traversing Manipulation CSS Events Effects Ajax Utilities".split(" ");
+$("#q").autocomplete(data);
+//$("#q").autocomplete({ url: "search.js", minChars: 3});
+});
+</script>
+
+%form{ :action => "search", :method => "get"}
+  %p
+    %label{:for => "q"} Search for drug or condition:
+    %input{:type => "text", :name => "q", :id => "q", :class => "text"}
+    %input{:type => "submit", :value => "Search", :class => "button"}
+
+- if @query 
+  - if @trials_found_count > 0
+
+    %p   
+    %strong= @trials_found_count
+    trials found for
+    %em= @query 
+    &#8211; we have searched PubMed for 
+    %strong= @trials_searched_count
+    of these, and found that  
+    %strong= @trials_published_count
+    have been published.
+
+    %p 
+    =render :partial => 'trial', :collection => @trials_found
+
+
+  - else
+    %p 
+    No results for 
+    %em= @query
+
