@@ -17,9 +17,11 @@ class IsrctnParser
     get_trial(@base_url)
   end
 
-  # get links to all trials listed on ISRCTN search page
+  # get links to all trials listed on ISRCTN results page: 
+  # scrape those trials, then follow 'next page' link recursively
   def get_trial(url)
-    doc = open(url) { |f| Hpricot(f) }
+    page_content = open(url).read()
+    doc = Hpricot(page_content)
     tds = doc.search("//td[@id='WhiteText']")
     trial_links = (tds/"a")
     for trial_link in trial_links do
@@ -27,19 +29,22 @@ class IsrctnParser
       scrape_trial(individual_trial)
     end
     # if there is a 'next' page, go there
-    next_page = doc.at("//a[@title='Next Page of Results']")['href']
-    if next_page
-      #puts "Moving to next page: " + next_page
-      next_link = "http://www.controlled-trials.com" + next_page
-      get_trial(next_link)
+    begin
+      next_page = doc.at("//a[@title='Next Page of Results']")['href']
+      if next_page
+        next_link = "http://www.controlled-trials.com" + next_page
+        get_trial(next_link)
+      end
+    rescue
+      puts "last page"
     end
   end
   
   # get the properties of each individual trial
   # and save FieldName and FieldValue rows in a hash
   def scrape_trial(trial_url)
-    #puts 'scraping : ' + trial_url
-    doc = open(trial_url) { |f| Hpricot(f) }
+    page_content = open(trial_url).read()
+    doc = Hpricot(page_content)
     field_names = doc.search("//td[@id='FieldName']")
     field_values = doc.search("//td[@id='FieldValue']")
     name_array = []
@@ -52,14 +57,20 @@ class IsrctnParser
     for value in field_values do
       value = value.inner_text.strip
       value = Iconv.iconv("us-ascii//ignore", "iso-8859-1", value) # Not sure this is ideal, but utf8 and latin1 produce errors
-      #puts 'value: ' + value[0]
       value_array << value[0]
     end
     value_array.each_with_index do |value, index|
       value_hash[name_array[index]] = value
     end
     trial_attributes = get_attributes(trial_url, value_hash)
-    # save the trial
+    # save the trial, unless one with the same ID already exists
+    existing = ClinicalTrial.find_by_isrctn_id(trial_attributes[:isrctn_id])
+    if existing
+      puts "Skipping #{trial_attributes[:isrctn_id]}"
+      return 
+    else
+      puts "Parsing #{trial_attributes[:isrctn_id]}"
+    end
     trial = ClinicalTrial.create!(trial_attributes)
     # save extra info - contacts, sponsors, outcomes etc
     raise unless trial.id
@@ -96,7 +107,7 @@ class IsrctnParser
     end
   end
 
-  # Get attributes & put in hash - leave non-ISRCTN ones blank
+  # Get attributes & put in hash - leave non-ISRCTN attributes blank
   def get_attributes(trial_url, values_hash)
     trial_attributes = {:url => trial_url, 
       :nct_id => values_hash["ClinicalTrials.gov identifier"], 

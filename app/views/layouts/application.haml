@@ -1,6 +1,12 @@
 !!!
 %html
   %head
+    %title Clinical Trials
+    %meta{'http-equiv' => 'content-type', :content => 'text/html'} 
+    = javascript_include_tag 'http://code.jquery.com/jquery-latest.js'
+    = javascript_include_tag 'http://dev.jquery.com/view/trunk/plugins/autocomplete/jquery.autocomplete.js'
+    = stylesheet_link_tag 'http://dev.jquery.com/view/trunk/plugins/autocomplete/jquery.autocomplete.css'
     = stylesheet_link_tag 'application'
+    %link{:rel => 'shortcut icon', :href => 'favicon.ico'}
   %body
     = yield

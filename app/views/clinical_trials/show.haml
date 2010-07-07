@@ -36,16 +36,20 @@
     %b Last changed:
     =@trial.lastchanged_date
   .sponsor
-    %b Lead Sponsor:
+    %b Lead sponsor:
     =@trial.lead_sponsor.agency.name
   .collaborators
     %b Collaborators:
     -@trial.collaborators.each do |collaborator|
       = collaborator.agency.name
-  .nct-id
-    %b ClinicalTrials.gov identifier:
-    =@trial.nct_id
-  .org-study-id
+  - if @trial.nct_id
+    .nct_id
+      %b ClinicalTrials.gov identifier:
+      =@trial.nct_id
+  .isrctn_id
+    %b ISRCTN identifier:
+    =@trial.isrctn_id
+  .org_study_id
     %b Org. study ID:
     =@trial.org_study_id
   .source
@@ -60,6 +64,24 @@
   .study_design
     %b Study design:
     =@trial.study_design
+  .disease_condition
+    %b Disease or condition studied:
+    =@trial.disease_condition
+  .condition_id
+    %b Condition ID:
+    =@trial.condition_id
+  .inclusion_criteria
+    %b Inclusion criteria:
+    =@trial.inclusion_criteria
+  .exclusion_criteria
+    %b Exclusion criteria:
+    =@trial.exclusion_criteria
+  .primary_outcome_measures
+    %b Primary outcome measures:
+    =@trial.primary_outcome_measures
+  .secondary_outcome_measures
+    %b Secondary outcome measures:
+    =@trial.secondary_outcome_measures
   .phase
     %b Phase:
     =@trial.phase
@@ -80,5 +102,9 @@
     .overall_contact
       %b Overall contact:
   .locations
-    %b Locations
+    %b Locations:
   = render :partial => 'location', :collection => @trial.locations
+  - if @trial.countries_of_recruitment
+    .countries_of_recruitment
+      %b Countries of recruitment:
+      =@trial.countries_of_recruitment

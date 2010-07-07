@@ -82,4 +82,13 @@ class ClinicalTrial < ActiveRecord::Base
     end
     changes
   end
+  
+  def self.search(search)
+    if search
+      find(:all, :conditions => ["brief_title LIKE ? or official_title LIKE ?", "% #{search} %", "% #{search} %"], :order => 'id DESC')
+    else
+      find(:all, :order => 'id DESC')
+    end
+  end
+        
 end
