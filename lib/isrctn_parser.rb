@@ -65,6 +65,9 @@ class IsrctnParser
     trial_attributes = get_attributes(trial_url, value_hash)
     # save the trial, unless one with the same ID already exists
     existing = ClinicalTrial.find_by_isrctn_id(trial_attributes[:isrctn_id])
+    if !existing && !trial_attributes[:nct_id].blank?
+      existing = ClinicalTrial.find_by_nct_id(trial_attributes[:nct_id])
+    end
     if existing
       puts "Skipping #{trial_attributes[:isrctn_id]}"
       return 
