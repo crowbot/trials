@@ -10,10 +10,13 @@ class ClinicalTrialsController < ApplicationController
     @trial = ClinicalTrial.find(params[:id])
   end
   
+  def statistics
+  end
+  
   def search
     if params[:q]
       @trials_found = ClinicalTrial.search(params[:q])
-      @trials_found_count = @trials_found.count
+      @trials_found_count = @trials_found.size
       @trials_published_count = 0
       @trials_searched_count = 0
       for @trial_found in @trials_found
@@ -29,7 +32,7 @@ class ClinicalTrialsController < ApplicationController
       @trials_found = []
     end
     respond_to do |wants|
-      wants.html
+      wants.html{ @trials_found = @trials_found.paginate(:page => params[:page], :per_page => 20) }
       wants.js
     end
   end

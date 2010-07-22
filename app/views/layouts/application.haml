@@ -9,4 +9,17 @@
     = stylesheet_link_tag 'application'
     %link{:rel => 'shortcut icon', :href => 'favicon.ico'}
   %body
-    = yield
+    .wrapper
+      %h1
+        = link_to_unless_current "TrialMinder", root_url
+      %ul.nav
+        %li 
+        %li= link_to "Statistics", statistics_url
+        %li
+          %form{ :action => "search", :method => "get"}
+            %input{:type => "text", :name => "q", :id => "q", :class => "text"}
+            %input{:type => "submit", :value => "Search", :class => "button"}
+      .content
+        = yield
+      .footer
+      

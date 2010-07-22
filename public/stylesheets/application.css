@@ -2,6 +2,10 @@ body {
   font-family: Verdana,sans-serif;
 }
 
+.content {
+  margin: 0.5em;
+}
+
 .trial-link {
   padding: 5px;
 }
@@ -28,4 +32,25 @@ body {
 
 .history {
   background-color: #97A2BB;
+}
+
+/* Navigation */
+ul.nav {
+  list-style-type: none;
+  position: absolute;
+  right: 1em;
+  top: 1em;
+}
+
+ul.nav li, 
+ul.nav li form,
+ul.nav li label, 
+ul.nav li input {
+  display: inline;
+}
+
+/* Pagination */
+
+.pagination a {
+  padding: 0.3em;
 }
