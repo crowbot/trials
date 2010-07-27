@@ -16,7 +16,9 @@ class Agency < ActiveRecord::Base
                                       AND searched = 1
                                       AND completion_date is not null)
                                       GROUP BY agency_id) as tmp
-                  WHERE agencies.id = agency_id limit #{limit};", Time.now.beginning_of_month - 3.years])
+                  WHERE agencies.id = agency_id 
+                  ORDER BY cnt
+                  LIMIT #{limit};", Time.now.beginning_of_month - 3.years])
     
   end
   
