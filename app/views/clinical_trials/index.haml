@@ -1,6 +1,8 @@
 %h2 Clinical Trials
 
-%p The following trials completed more than three years ago and have not yet been published - #{@trials.total_entries} of a total of #{@total_trials_count} 
+- if params[:agency_id]
+  %h3= Agency.find(params[:agency_id]).name
+%p The following trials completed more than three years ago and have not yet been published - #{@trials.total_entries} of a total of #{@total_trials_count} in this database
 
 = will_paginate @trials
 = render :partial => 'trial', :collection => @trials

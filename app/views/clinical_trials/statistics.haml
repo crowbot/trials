@@ -3,4 +3,4 @@
 Top 10 Sponsors of unpublished trials:
 %ol
   - @agencies.each do |agency|
-    %li= "#{agency.name} (#{agency.cnt} trials)" 
+    %li= "#{agency.name} (#{link_to("#{agency.cnt} trials", root_url(:agency_id => agency.id))})"
