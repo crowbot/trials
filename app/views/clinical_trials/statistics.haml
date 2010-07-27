@@ -1,1 +1,6 @@
 %h2 Statistics
+
+Top 10 Sponsors of unpublished trials:
+%ol
+  - @agencies.each do |agency|
+    %li= "#{agency.name} (#{agency.cnt} trials)" 

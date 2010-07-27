@@ -11,6 +11,7 @@ class ClinicalTrialsController < ApplicationController
   end
   
   def statistics
+    @agencies = Agency.by_unpublished_completed()
   end
   
   def search

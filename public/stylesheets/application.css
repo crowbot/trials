@@ -1,5 +1,16 @@
 body { 
   font-family: Verdana,sans-serif;
+  margin: 0px;
+}
+
+.header {
+  border-bottom: solid 2px #93D411;
+  padding: 0.5em;
+  background-color: #C2E973;
+}
+
+.header h1 {
+  margin: 0.3em;
 }
 
 .content {
@@ -11,27 +22,28 @@ body {
 }
 
 .trial-information div {
-  padding: 5px;
-}
-
-.trial-information .publication-status{
-  font-size: 1.2em;
+  padding: 5px 5px 5px 5px;
+  margin: 5px;
 }
 
 .publication-status .found {
   background-color: #E0FA71;
+  border: solid 2px #8AA325;
 }
 
 .publication-status .unknown {
-  background-color: #EEEEEE;
+  background-color: #D9D9D9;
+  border: solid 2px #B3B3B3;
 }
 
 .publication-status .not-found {
-  background-color: #FF7E40;
+  background-color: #F18077;
+  border: solid 2px #E32112;
 }
 
 .history {
-  background-color: #97A2BB;
+  background-color: #D9D9D9;
+  border: solid 2px #B3B3B3;
 }
 
 /* Navigation */
@@ -39,7 +51,7 @@ ul.nav {
   list-style-type: none;
   position: absolute;
   right: 1em;
-  top: 1em;
+  top: 0.5em;
 }
 
 ul.nav li, 

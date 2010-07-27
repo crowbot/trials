@@ -1,6 +1,6 @@
-%h3.trial-brief-title= @trial.brief_title
+%h2.trial-brief-title= @trial.brief_title
 .trial-information
-  .publication-status
+  %span.publication-status
     - if @trial.searched and @trial.articles.empty? 
       .not-found
         %b Publication status:
@@ -45,7 +45,7 @@
   - if @trial.nct_id
     .nct_id
       %b ClinicalTrials.gov identifier:
-      =@trial.nct_id
+      =link_to @trial.nct_id, "http://clinicaltrials.gov/ct2/show/#{@trial.nct_id}"
   .isrctn_id
     %b ISRCTN identifier:
     =@trial.isrctn_id
