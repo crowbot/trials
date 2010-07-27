@@ -14,7 +14,7 @@ class Agency < ActiveRecord::Base
                                       WHERE completion_date_as_date < ? 
                                       AND trial_mentions.id is NULL
                                       AND searched = 1
-                                      AND completion_date is not null
+                                      AND completion_date is not null)
                                       GROUP BY agency_id) as tmp
                   WHERE agencies.id = agency_id limit #{limit};", Time.now.beginning_of_month - 3.years])
     
