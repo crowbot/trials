@@ -5,5 +5,5 @@
   %li= "Number completed: #{@intervention.clinical_trials.completed.count}"
   %li= "Number searched: #{@intervention.clinical_trials.searched.count}"
   %li= "Number found published: #{@intervention.clinical_trials.searched.published.count}"
-  %li= "Number completed more than three years ago #{@intervention.clinical_trials.three_years_old.count}"
-  %li= "Number completed more than three years ago, searched, not published #{link_to(@intervention.clinical_trials.completed.three_years_old.searched.unpublished.count, root_url(:intervention_id => @intervention.id, :unpublished => true))}"
+  %li= "Number completed more than three years ago: #{@intervention.clinical_trials.three_years_old.count}"
+  %li= "Number completed more than three years ago, searched, not published: #{link_to(@intervention.clinical_trials.completed.three_years_old.searched.unpublished.count, root_url(:intervention_id => @intervention.id, :unpublished => true))}"

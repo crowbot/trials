@@ -6,8 +6,8 @@
   %li= "Number completed: #{@agency.clinical_trials.completed.count}"
   %li= "Number searched: #{@agency.clinical_trials.searched.count}"
   %li= "Number found published: #{@agency.clinical_trials.searched.published.count}"
-  %li= "Number completed more than three years ago #{@agency.clinical_trials.three_years_old.count}"
-  %li= "Number completed more than three years ago, searched, not published #{link_to(@agency.clinical_trials.completed.three_years_old.searched.unpublished.count, root_url(:agency_id => @agency.id, :unpublished => true))}"
+  %li= "Number completed more than three years ago: #{@agency.clinical_trials.three_years_old.count}"
+  %li= "Number completed more than three years ago, searched, not published: #{link_to(@agency.clinical_trials.completed.three_years_old.searched.unpublished.count, root_url(:agency_id => @agency.id, :unpublished => true))}"
   
 %h3 As trial overall official affiliation...
 %ul.agency-statistics
@@ -15,5 +15,5 @@
   %li= "Number completed: #{@agency.supervised_trials.completed.count}"
   %li= "Number searched: #{@agency.supervised_trials.searched.count}"
   %li= "Number found published: #{@agency.supervised_trials.searched.published.count}"
-  %li= "Number completed more than three years ago #{@agency.supervised_trials.three_years_old.count}"
-  %li= "Number completed more than three years ago, searched, not published #{link_to(@agency.supervised_trials.completed.three_years_old.searched.unpublished.count, root_url(:official_agency_id => @agency.id, :unpublished => true))}"
+  %li= "Number completed more than three years ago: #{@agency.supervised_trials.three_years_old.count}"
+  %li= "Number completed more than three years ago, searched, not published: #{link_to(@agency.supervised_trials.completed.three_years_old.searched.unpublished.count, root_url(:official_agency_id => @agency.id, :unpublished => true))}"
