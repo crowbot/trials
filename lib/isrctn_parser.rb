@@ -69,11 +69,14 @@ class IsrctnParser
       existing = ClinicalTrial.find_by_nct_id(trial_attributes[:nct_id])
     end
     if existing
+      existing.isrctn_id = trial_attributes[:isrctn_id]
+      existing.save!
       puts "Skipping #{trial_attributes[:isrctn_id]}"
       return 
     else
       puts "Parsing #{trial_attributes[:isrctn_id]}"
     end
+    puts trial_attributes[:disease_condition]
     trial = ClinicalTrial.create!(trial_attributes)
     # save extra info - contacts, sponsors, outcomes etc
     raise unless trial.id
@@ -108,6 +111,14 @@ class IsrctnParser
       trial.overall_contact = contact_model
       trial.save!
     end
+    # disease condition
+    if value_hash["Disease/condition/study domain"] != ""
+      condition_name = value_hash["Disease/condition/study domain"] 
+      condition = Condition.find_or_create_by_name(condition_name)
+      condition_trial = ConditionTrial.create(:clinical_trial_id => trial.id, 
+                                              :condition_id => condition.id)
+    end
+      
   end
 
   # Get attributes & put in hash - leave non-ISRCTN attributes blank
@@ -141,10 +152,9 @@ class IsrctnParser
       :isrctn_id =>  values_hash["ISRCTN"], # ISRCTN-only field
       :ethics_approval => values_hash["Ethics approval"], # ISRCTN-only field
       :acronym => values_hash["Acronym"], # ISRCTN-only field 
-      :disease_condition => values_hash["Disease/condition/study domain"], # ISRCTN-only field
       :inclusion_criteria => values_hash["Participants - inclusion criteria"], # ISRCTN-only field
       :exclusion_criteria => values_hash["Participants - exclusion criteria"], # ISRCTN-only field
-      :interventions => values_hash["Interventions"], # ISRCTN-only field
+      :interventions_description => values_hash["Interventions"], # ISRCTN-only field
       :patient_info_material => values_hash["Patient information material"], # ISRCTN-only field
       :funding_sources => values_hash["Sources of funding"], # ISRCTN-only field
       :trial_website => values_hash["Trial website"], # ISRCTN-only field

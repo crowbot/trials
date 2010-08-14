@@ -14,7 +14,7 @@ body {
 }
 
 .content {
-  margin: 0.5em;
+  margin: 2em;
 }
 
 .trial-link {
@@ -62,7 +62,27 @@ ul.nav li input {
 }
 
 /* Pagination */
-
+.pagination {
+  padding: 0.6em 0;
+}
 .pagination a {
-  padding: 0.3em;
+  margin: 0.3em;
+}
+
+/* Agencies */
+
+.agency-link {
+  padding: 0.4em;
+}
+
+/* Interventions */
+
+.intervention-link {
+  padding: 0.4em;
+}
+
+/* Conditions */
+
+.condition-link {
+  padding: 0.4em;
 }

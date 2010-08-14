@@ -1,0 +1,9 @@
+%h2= @condition.name
+
+%ul.condition-statistics
+  %li= "Number of trials in database: #{link_to(@condition.clinical_trials.count, root_url(:condition_id => @condition.id))}"
+  %li= "Number completed: #{@condition.clinical_trials.completed.count}"
+  %li= "Number searched: #{@condition.clinical_trials.searched.count}"
+  %li= "Number found published: #{@condition.clinical_trials.searched.published.count}"
+  %li= "Number completed more than three years ago #{@condition.clinical_trials.three_years_old.count}"
+  %li= "Number completed more than three years ago, searched, not published #{link_to(@condition.clinical_trials.completed.three_years_old.searched.unpublished.count, root_url(:condition_id => @condition.id, :unpublished => true))}"

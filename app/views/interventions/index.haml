@@ -1,0 +1,7 @@
+%h2= "Interventions (#{@total_interventions})"
+
+- InterventionType.find(:all).each do |intervention_type| 
+  %span.intevention-type= link_to(intervention_type.name, interventions_url(:intervention_type_id => intervention_type.id))
+= will_paginate @interventions
+= render :partial => 'intervention', :collection => @interventions
+= will_paginate @interventions

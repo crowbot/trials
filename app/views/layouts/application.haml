@@ -14,7 +14,9 @@
         %h1
           = link_to_unless_current "TrialMinder", root_url
         %ul.nav
-          %li 
+          %li= link_to "Conditions", conditions_url
+          %li= link_to "Agencies", agencies_url
+          %li= link_to "Interventions", interventions_url
           %li= link_to "Statistics", statistics_url
           %li
             %form{ :action => "search", :method => "get"}

@@ -11,7 +11,7 @@ $("#q").autocomplete(data);
 
 %form{ :action => "search", :method => "get"}
   %p
-    %label{:for => "q"} Search for drug or condition:
+    %label{:for => "q"} Search for drug, condition or NCT ID:
     %input{:type => "text", :name => "q", :id => "q", :class => "text", :value => params[:q]}
     %input{:type => "submit", :value => "Search", :class => "button"}
 

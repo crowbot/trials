@@ -3,4 +3,14 @@
 Top 10 Sponsors of unpublished trials:
 %ol
   - @agencies.each do |agency|
-    %li= "#{agency.name} (#{link_to("#{agency.cnt} trials", root_url(:agency_id => agency.id))})"
+    %li= "#{agency.name} (#{link_to("#{agency.percent_unpublished_complete.round} percent -  #{pluralize(agency.clinical_trials.completed.searched.three_years_old.size ,'trial')}", root_url(:agency_id => agency.id, :unpublished => true))})"
+    
+Top 10 conditions with unpublished trials:
+%ol
+  - @conditions.each do |condition|
+    %li= "#{condition.name} (#{link_to("#{condition.percent_unpublished_complete.round} percent -  #{pluralize(condition.clinical_trials.completed.searched.three_years_old.size ,'trial')}", root_url(:condition_id => condition.id, :unpublished => true))})"
+    
+Top 10 interventions with unpublished trials:
+%ol
+  - @interventions.each do |intervention|
+    %li= "#{intervention.name} (#{link_to("#{intervention.percent_unpublished_complete.round} percent -  #{pluralize(intervention.clinical_trials.completed.searched.three_years_old.size ,'trial')}", root_url(:intervention_id => intervention.id, :unpublished => true))})"

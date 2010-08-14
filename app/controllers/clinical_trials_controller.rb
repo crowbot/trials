@@ -1,16 +1,41 @@
 class ClinicalTrialsController < ApplicationController
   
   def index
-    condition_string = 'completion_date_as_date < ?'
-    condition_params = [Time.now.beginning_of_month - 3.years]
+    condition_string = ''
+    condition_params = []
     
     if params[:agency_id]
-      condition_string += " and sponsors.agency_id = ?"
+      condition_string += "sponsors.agency_id = ?"
       condition_params << params[:agency_id]
     end
+    
+    if params[:official_agency_id]
+      condition_string += "overall_officials.agency_id = ?"
+      condition_params << params[:official_agency_id]
+    end
+    
+    if params[:intervention_id]
+      condition_string += "trial_interventions.intervention_id = ?"
+      condition_params << params[:intervention_id]
+    end
+    
+    if params[:condition_id]
+      condition_string += "condition_trials.condition_id = ?"
+      condition_params << params[:condition_id]
+    end
+    
+    
+    if params[:unpublished]
+      clazz = ClinicalTrial.searched.completed.three_years_old.unpublished
+    else
+      clazz = ClinicalTrial
+    end
+    
     condition_params = [condition_string] + condition_params
-    @trials = ClinicalTrial.completed.searched.unpublished.paginate(:all, :page => params[:page], 
-                 :conditions => condition_params, :include => :sponsors)
+    
+    @trials = clazz.paginate(:all, :page => params[:page], 
+                                   :conditions => condition_params, 
+                                   :include => [:sponsors, :trial_interventions, :overall_official, :condition_trials])
     @total_trials_count = ClinicalTrial.count
   end
    
@@ -19,7 +44,9 @@ class ClinicalTrialsController < ApplicationController
   end
   
   def statistics
-    @agencies = Agency.by_unpublished_completed()
+    @agencies = Agency.by_unpublished_completed
+    @conditions = Condition.by_unpublished_completed
+    @interventions = Intervention.by_unpublished_completed
   end
   
   def search

@@ -1,0 +1,5 @@
+%h2= "Agencies (#{@total_agencies})"
+
+= will_paginate @agencies
+= render :partial => 'agency', :collection => @agencies
+= will_paginate @agencies

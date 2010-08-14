@@ -9,12 +9,14 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20100727185013) do
+ActiveRecord::Schema.define(:version => 20100814154626) do
 
   create_table "agencies", :force => true do |t|
     t.string   "name"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.float    "percent_unpublished_complete"
+    t.integer  "count_unpublished_complete"
   end
 
   create_table "articles", :force => true do |t|
@@ -51,7 +53,6 @@ ActiveRecord::Schema.define(:version => 20100727185013) do
     t.string   "study_design"
     t.integer  "enrollment"
     t.string   "enrollment_type"
-    t.integer  "condition_id"
     t.datetime "created_at"
     t.datetime "updated_at"
     t.string   "why_stopped"
@@ -77,9 +78,26 @@ ActiveRecord::Schema.define(:version => 20100727185013) do
     t.string   "trial_website"
     t.string   "publications"
     t.string   "date_isrctn_assigned"
-    t.text     "interventions"
+    t.text     "interventions_description"
     t.string   "countries_of_recruitment"
     t.date     "completion_date_as_date"
+    t.string   "nct_alias"
+    t.datetime "download_date"
+  end
+
+  create_table "condition_trials", :force => true do |t|
+    t.integer  "condition_id"
+    t.integer  "clinical_trial_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "conditions", :force => true do |t|
+    t.text     "name"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.float    "percent_unpublished_complete"
+    t.integer  "count_unpublished_complete"
   end
 
   create_table "contacts", :force => true do |t|
@@ -100,6 +118,21 @@ ActiveRecord::Schema.define(:version => 20100727185013) do
     t.string   "zip"
     t.datetime "created_at"
     t.datetime "updated_at"
+  end
+
+  create_table "intervention_types", :force => true do |t|
+    t.string   "name"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "interventions", :force => true do |t|
+    t.integer  "intervention_type_id"
+    t.string   "name"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.float    "percent_unpublished_complete"
+    t.integer  "count_unpublished_complete"
   end
 
   create_table "investigators", :force => true do |t|
@@ -165,6 +198,13 @@ ActiveRecord::Schema.define(:version => 20100727185013) do
 
   add_index "sponsors", ["agency_id"], :name => "index_sponsors_on_agency_id"
   add_index "sponsors", ["clinical_trial_id"], :name => "index_sponsors_on_clinical_trial_id"
+
+  create_table "trial_interventions", :force => true do |t|
+    t.integer  "clinical_trial_id"
+    t.integer  "intervention_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
 
   create_table "trial_mentions", :force => true do |t|
     t.integer  "clinical_trial_id"

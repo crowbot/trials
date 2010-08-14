@@ -25,8 +25,11 @@ class TrialsParser
     xml = File.read(file_path)
     doc = Hpricot::XML(xml)
     url = (doc/:required_header/:url).text
+    download_date = (doc/:required_header/:download_date).text
     nct_id = (doc/:id_info/:nct_id).text
     org_study_id = (doc/:org_study_id).text
+    secondary_ids = doc.search('secondary_id').map{ |secondary_id_element| secondary_id_element.inner_text }.join(",")
+    nct_alias = (doc/:id_info/:nct_alias).text
     brief_title = (doc/:brief_title).text
     official_title = (doc/:official_title).text
     source = (doc/:source).text
@@ -47,6 +50,7 @@ class TrialsParser
     end_date = (doc/:end_date).text
     completion_date = doc.at('completion_date') ? doc.at('completion_date').inner_text : nil
     completion_date_type = doc.at('completion_date') ? doc.at('completion_date').attributes['type'] : nil
+    
     primary_completion_date = doc.at('primary_completion_date') ? doc.at('primary_completion_date').inner_text : nil
     primary_completion_date_type = doc.at('primary_completion_date') ? doc.at('primary_completion_date').attributes['type'] : nil
     phase = (doc/:phase).text
@@ -68,8 +72,11 @@ class TrialsParser
     firstreceived_date = doc.at('firstreceived_date') ? doc.at('firstreceived_date').inner_text : nil
     lastchanged_date = doc.at('lastchanged_date') ? doc.at('lastchanged_date').inner_text : nil
     trial_attributes = {:url => url, 
+                        :download_date => download_date,
                        :nct_id => nct_id, 
+                       :secondary_ids => secondary_ids,
                        :org_study_id => org_study_id,
+                       :nct_alias => nct_alias,
                        :brief_title => brief_title,
                        :official_title => official_title,
                        :source => source, 
@@ -117,7 +124,7 @@ class TrialsParser
       end
       if official.at('affiliation')
         affiliation = official.at('affiliation').inner_text
-        agency = Agency.find_or_create_by_name(affiliation)
+        agency = Agency.find_or_create_by_name(affiliation.strip)
         overall_official.agency_id = agency.id
       end
       overall_official.save!
@@ -175,14 +182,14 @@ class TrialsParser
       sponsor_element = :sponsors
     end
     lead_sponsor_name = (doc/sponsor_element/:lead_sponsor/:agency).text
-    agency = Agency.find_or_create_by_name(lead_sponsor_name)
+    agency = Agency.find_or_create_by_name(lead_sponsor_name.strip)
     collaborator_elements = doc.at(sponsor_element).search('collaborator')
     lead_sponsor = Sponsor.create(:agency_id => agency.id, 
                                   :clinical_trial_id => trial.id, 
                                   :role => 'lead')
     collaborator_elements.each do |collaborator|
       collaborator_name = collaborator.inner_text
-      agency = Agency.find_or_create_by_name(collaborator_name)
+      agency = Agency.find_or_create_by_name(collaborator_name.strip)
       collaborator = Sponsor.create(:agency_id => agency.id, 
                                     :clinical_trial_id => trial.id, 
                                     :role => 'collaborator')
@@ -225,6 +232,22 @@ class TrialsParser
                                          :organization => organization,
                                          :clinical_trial_id => trial.id)
        end
+    end
+    
+    doc.search("intervention").each do |intervention_element|
+      intervention_type_name = intervention_element.at('intervention_type').inner_text
+      intervention_type = InterventionType.find_or_create_by_name(intervention_type_name)
+      intervention_name = intervention_element.at("intervention_name").inner_text
+      intervention = Intervention.find_or_create_by_name_and_intervention_type_id(intervention_name, intervention_type.id)
+      trial_intervention = TrialIntervention.create(:clinical_trial_id => trial.id, 
+                                                    :intervention_id => intervention.id)
+    end
+    
+    doc.search("condition").each do |condition_element|
+      condition_name = condition_element.inner_text
+      condition = Condition.find_or_create_by_name(condition_name)
+      condition_trial = ConditionTrial.create(:clinical_trial_id => trial.id, 
+                                              :condition_id => condition.id)
     end
   end
 end

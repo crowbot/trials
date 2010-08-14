@@ -1,0 +1,9 @@
+# Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
+
+one:
+  clinical_trial_id: 1
+  intervention_id: 1
+
+two:
+  clinical_trial_id: 1
+  intervention_id: 1

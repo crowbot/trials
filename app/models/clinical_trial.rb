@@ -40,6 +40,11 @@ class ClinicalTrial < ActiveRecord::Base
   has_many :locations, :foreign_key => :trial_id
   has_many :trial_mentions
   has_many :articles, :through => :trial_mentions
+  before_create :set_completion_date_as_date
+  has_many :trial_interventions
+  has_many :interventions, :through => :trial_interventions
+  has_many :condition_trials
+  has_many :conditions, :through => :condition_trials
   
   def self.per_page
     20
@@ -51,10 +56,15 @@ class ClinicalTrial < ActiveRecord::Base
                             :joins => ["LEFT OUTER JOIN trial_mentions 
                                         ON clinical_trials.id = trial_mentions.clinical_trial_id"], 
                             :conditions => "trial_mentions.id is NULL"
-
+  named_scope :published, :select => 'clinical_trials.*',
+                            :joins => ["LEFT OUTER JOIN trial_mentions 
+                                        ON clinical_trials.id = trial_mentions.clinical_trial_id"], 
+                            :conditions => "trial_mentions.id is not NULL"
   named_scope :searched, :conditions => ['searched = ?', true]
-  
+  named_scope :three_years_old, lambda { { :conditions => ["completion_date_as_date < ?", Time.now - 3.years] } }
+
   def analyse_history
+    return nil if nct_id.blank?
     history_dir = File.join(HISTORY_PATH, nct_id)
     if !File.exist?(history_dir)
       return nil
@@ -83,9 +93,15 @@ class ClinicalTrial < ActiveRecord::Base
     changes
   end
   
+  def set_completion_date_as_date
+    if !self.completion_date.blank?
+      self.completion_date_as_date = Date.parse(self.completion_date)
+    end
+  end
+  
   def self.search(search)
     if search
-      find(:all, :conditions => ["brief_title LIKE ? or official_title LIKE ?", "% #{search} %", "% #{search} %"], :order => 'id DESC')
+      find(:all, :conditions => ["nct_id = ? or brief_title LIKE ? or official_title LIKE ?", search, "% #{search} %", "% #{search} %"], :order => 'id DESC')
     else
       find(:all, :order => 'id DESC')
     end

@@ -1,0 +1,4 @@
+.agency-link
+  = "#{link_to(agency.name.strip, agency_url(agency))}"
+  = "(#{pluralize(agency.clinical_trials.count, "trial")} sponsored, "
+  = "overall official in #{pluralize(agency.supervised_trials.count, "trial")})"

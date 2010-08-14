@@ -1,0 +1,3 @@
+.intervention-link
+  = link_to("#{intervention.name}", intervention_url(intervention))       
+  = "(#{pluralize(intervention.clinical_trials.count, "trial")})"

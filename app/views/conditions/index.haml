@@ -1,0 +1,5 @@
+%h2= "Conditions (#{@total_conditions})"
+
+= will_paginate @conditions
+= render :partial => 'condition', :collection => @conditions
+= will_paginate @conditions

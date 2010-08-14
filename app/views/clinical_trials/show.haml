@@ -37,11 +37,11 @@
     =@trial.lastchanged_date
   .sponsor
     %b Lead sponsor:
-    =@trial.lead_sponsor.agency.name
+    = link_to(@trial.lead_sponsor.agency.name, agency_url(@trial.lead_sponsor.agency))
   .collaborators
     %b Collaborators:
     -@trial.collaborators.each do |collaborator|
-      = collaborator.agency.name
+      = link_to(collaborator.agency.name, agency_url(collaborator.agency))
   - if @trial.nct_id
     .nct_id
       %b ClinicalTrials.gov identifier:
@@ -67,9 +67,6 @@
   .disease_condition
     %b Disease or condition studied:
     =@trial.disease_condition
-  .condition_id
-    %b Condition ID:
-    =@trial.condition_id
   .inclusion_criteria
     %b Inclusion criteria:
     =@trial.inclusion_criteria
@@ -82,6 +79,13 @@
   .secondary_outcome_measures
     %b Secondary outcome measures:
     =@trial.secondary_outcome_measures
+  .interventions
+    - if !@trial.interventions.empty?
+      %b Interventions
+      - @trial.interventions.each do |intervention|
+        = "#{link_to(intervention.name, intervention_url(intervention))} (#{intervention.intervention_type.name})"
+    %b Interventions description
+    = @trial.interventions_description
   .phase
     %b Phase:
     =@trial.phase
@@ -97,7 +101,7 @@
       =@trial.overall_official.name 
       ="(#{@trial.overall_official.role})"
       - if @trial.overall_official.agency
-        =@trial.overall_official.agency.name
+        =link_to(@trial.overall_official.agency.name, agency_url(@trial.overall_official.agency))
   - if @trial.overall_contact
     .overall_contact
       %b Overall contact:

@@ -1,9 +1,17 @@
 %h2 Clinical Trials
 
 - if params[:agency_id]
-  %h3= Agency.find(params[:agency_id]).name
-%p The following trials completed more than three years ago and have not yet been published - #{@trials.total_entries} of a total of #{@total_trials_count} in this database
+  %h3= "Sponsor: #{Agency.find(params[:agency_id]).name}"
+- if params[:intervention_id]
+  %h3= "Intervention: #{Intervention.find(params[:intervention_id]).name}"
+- if params[:condition_id]
+  %h3= "Condition: #{Condition.find(params[:condition_id]).name}"
+- if params[:official_agency_id]
+  %h3= "Overall official agency: #{Agency.find(params[:official_agency_id]).name}"
+- if params[:unpublished]
+  %h3= "Trials that are over 3 years old, have been searched, and appear to be unpublished"
 
+%b= "#{pluralize(@trials.total_entries, 'result')}"
 = will_paginate @trials
 = render :partial => 'trial', :collection => @trials
 = will_paginate @trials

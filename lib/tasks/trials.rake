@@ -1,29 +1,37 @@
+# general application rake tasks
 namespace :trials do
 
-  def usage_message message
-    puts ''
-    puts message
-    puts ''
-    exit 0
-  end
-  
-  desc "Parse trials from clinicaltrials.gov XML in DIR and save them in the db"
-  task :load => :environment do 
-    usage_message "usage: rake trials:load DIR=dirname" unless ENV['DIR']
-    trials_parser = TrialsParser.new
-    directory = ENV['DIR'] 
-    Dir.chdir(directory)
-    Dir.glob("*.xml").each do |filename|
-      trials_parser.parse_file(File.join(directory, filename))
-    end
+  desc 'Populate the database' 
+  task :populate => :environment do
+    # clear db
+    ENV['VERSION'] = '0'
+    puts 'About to migrate down to VERSION=0'
+    Rake::Task['db:migrate'].invoke
+    ENV['VERSION'] = nil
+    Rake::Task['db:migrate'].execute
+    
+    # load clinicaltrials.gov
+    Rake::Task['clinicaltrials:load'].invoke
+    # load ISRCTN
+    Rake::Task['isrctn:load'].invoke
+    # search pubmed
+    Rake::Task['pubmed:search'].invoke
+    # update cached statistics 
+    Rake::Task['trials:update_cached_statistics'].invoke
   end
 
-  desc 'Add date format completion date to trial record'
-  task :add_completion_dates => :environment do 
-    ClinicalTrial.completed.find_each do |trial|
-      trial.completion_date_as_date = Date.parse(trial.completion_date)
-      puts trial.completion_date_as_date
-      trial.save!
+  desc 'Update cached statistics'
+  task :update_cached_stats => :environment do 
+    Agency.find_each do |agency|
+      agency.update_cached_stats
+    end
+    
+    Condition.find_each do |condition|
+      condition.update_cached_stats
+    end
+    
+    Intervention.find_each do |intervention|
+      intervention.update_cached_stats
     end
   end
 end
