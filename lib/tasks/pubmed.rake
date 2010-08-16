@@ -4,7 +4,7 @@ namespace :pubmed do
   desc "Searches pubmed for articles related to clinical trials" 
   task :search => :environment do
     pubmed_parser = PubmedParser.new
-    ClinicalTrial.find_each(:conditions => ['searched = ? or searched is null', false]) do |trial|
+    ClinicalTrial.three_years_old.find_each(:conditions => ['searched = ? or searched is null', false]) do |trial|
       pubmed_ids = pubmed_parser.search_for_trial(trial)
       trial.searched = true
       pubmed_ids.each do |pubmed_id|
