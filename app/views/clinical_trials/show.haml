@@ -70,6 +70,8 @@
   .disease_condition
     %b Disease or condition studied:
     =@trial.disease_condition
+    - @trial.conditions.each do |condition|
+      = link_to(condition.name, condition_url(condition))
   .inclusion_criteria
     %b Inclusion criteria:
     =@trial.inclusion_criteria
