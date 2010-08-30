@@ -39,12 +39,12 @@ class ClinicalTrial < ActiveRecord::Base
   has_one :overall_official
   has_many :locations, :foreign_key => :trial_id
   has_many :trial_mentions
-  has_many :articles, :through => :trial_mentions
+  has_many :articles, :through => :trial_mentions, :uniq => true
   before_create :set_completion_date_as_date
   has_many :trial_interventions
-  has_many :interventions, :through => :trial_interventions
+  has_many :interventions, :through => :trial_interventions, :uniq => true
   has_many :condition_trials
-  has_many :conditions, :through => :condition_trials
+  has_many :conditions, :through => :condition_trials, :uniq => true
   
   def self.per_page
     20
