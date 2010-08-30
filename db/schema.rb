@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20100830100915) do
+ActiveRecord::Schema.define(:version => 20100830180950) do
 
   create_table "agencies", :force => true do |t|
     t.string   "name"
@@ -83,6 +83,7 @@ ActiveRecord::Schema.define(:version => 20100830100915) do
     t.date     "completion_date_as_date"
     t.string   "nct_alias"
     t.datetime "download_date"
+    t.boolean  "ctg_results",                   :default => false
   end
 
   create_table "condition_trials", :force => true do |t|
