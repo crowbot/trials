@@ -1,10 +1,10 @@
 %h2.trial-brief-title= @trial.brief_title
 .trial-information
   %span.publication-status
-    - if @trial.searched and @trial.articles.empty? 
+    - if @trial.searched and @trial.articles.empty? and !@trial.ctg_results
       .not-found
         %b Publication status:
-        We have searched PubMed and not found any publications
+        We have searched PubMed and not found any publications. There are no results at ClinicalTrials.gov for this trial.
     - elsif !@trial.searched
       .unknown
         %b Publication status:
@@ -12,9 +12,12 @@
     - else
       .found
         %b Publication status:
-        We found the following publications: 
-        - @trial.articles.each do |article|
-          =link_to article.pubmed_id, "http://www.ncbi.nlm.nih.gov/pubmed/#{article.pubmed_id}"
+        - if !@trial.articles.empty?
+          We found the following publications: 
+          - @trial.articles.each do |article|
+            =link_to article.pubmed_id, "http://www.ncbi.nlm.nih.gov/pubmed/#{article.pubmed_id}"
+        - else
+          ="There are results published for this trial at #{link_to('ClinicalTrials.gov', "http://clinicaltrials.gov/ct2/show/results/#{@trial.nct_id}")}"
   .history 
     %b Selected history:
     - changes = @trial.analyse_history

@@ -55,11 +55,11 @@ class ClinicalTrial < ActiveRecord::Base
   named_scope :unpublished, :select => 'clinical_trials.*',
                             :joins => ["LEFT OUTER JOIN trial_mentions 
                                         ON clinical_trials.id = trial_mentions.clinical_trial_id"], 
-                            :conditions => "trial_mentions.id is NULL"
+                            :conditions => ["trial_mentions.id is NULL and ctg_results = ?", false]
   named_scope :published, :select => 'clinical_trials.*',
                             :joins => ["LEFT OUTER JOIN trial_mentions 
                                         ON clinical_trials.id = trial_mentions.clinical_trial_id"], 
-                            :conditions => "trial_mentions.id is not NULL"
+                            :conditions => ["(trial_mentions.id is not NULL or ctg_results = ?)", true]
   named_scope :searched, :conditions => ['searched = ?', true]
   named_scope :three_years_old, lambda { { :conditions => ["completion_date_as_date < ?", Time.now - 3.years] } }
 
