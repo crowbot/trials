@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20100814154626) do
+ActiveRecord::Schema.define(:version => 20100830100915) do
 
   create_table "agencies", :force => true do |t|
     t.string   "name"
@@ -92,6 +92,9 @@ ActiveRecord::Schema.define(:version => 20100814154626) do
     t.datetime "updated_at"
   end
 
+  add_index "condition_trials", ["clinical_trial_id"], :name => "index_condition_trials_on_clinical_trial_id"
+  add_index "condition_trials", ["condition_id"], :name => "index_condition_trials_on_condition_id"
+
   create_table "conditions", :force => true do |t|
     t.text     "name"
     t.datetime "created_at"
@@ -173,12 +176,18 @@ ActiveRecord::Schema.define(:version => 20100814154626) do
     t.datetime "updated_at"
   end
 
+  add_index "overall_officials", ["agency_id"], :name => "index_overall_officials_on_agency_id"
+  add_index "overall_officials", ["clinical_trial_id"], :name => "index_overall_officials_on_clinical_trial_id"
+
   create_table "overseers", :force => true do |t|
     t.integer  "clinical_trial_id"
     t.integer  "authority_id"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
+
+  add_index "overseers", ["authority_id"], :name => "index_overseers_on_authority_id"
+  add_index "overseers", ["clinical_trial_id"], :name => "index_overseers_on_clinical_trial_id"
 
   create_table "responsible_parties", :force => true do |t|
     t.string   "name_title"
@@ -187,6 +196,8 @@ ActiveRecord::Schema.define(:version => 20100814154626) do
     t.datetime "created_at"
     t.datetime "updated_at"
   end
+
+  add_index "responsible_parties", ["clinical_trial_id"], :name => "index_responsible_parties_on_clinical_trial_id"
 
   create_table "sponsors", :force => true do |t|
     t.integer  "agency_id"
@@ -206,11 +217,17 @@ ActiveRecord::Schema.define(:version => 20100814154626) do
     t.datetime "updated_at"
   end
 
+  add_index "trial_interventions", ["clinical_trial_id"], :name => "index_trial_interventions_on_clinical_trial_id"
+  add_index "trial_interventions", ["intervention_id"], :name => "index_trial_interventions_on_intervention_id"
+
   create_table "trial_mentions", :force => true do |t|
     t.integer  "clinical_trial_id"
     t.integer  "article_id"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
+
+  add_index "trial_mentions", ["article_id"], :name => "index_trial_mentions_on_article_id"
+  add_index "trial_mentions", ["clinical_trial_id"], :name => "index_trial_mentions_on_clinical_trial_id"
 
 end

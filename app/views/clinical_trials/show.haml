@@ -84,6 +84,7 @@
       %b Interventions
       - @trial.interventions.each do |intervention|
         = "#{link_to(intervention.name, intervention_url(intervention))} (#{intervention.intervention_type.name})"
+  .interventions-description
     %b Interventions description
     = @trial.interventions_description
   .phase

@@ -106,5 +106,16 @@ class ClinicalTrial < ActiveRecord::Base
       find(:all, :order => 'id DESC')
     end
   end
-        
+  
+  def self.isrctn_count
+    count(:conditions => ['isrctn_id is not null and isrctn_id != ""'])
+  end
+  
+  def self.ctg_count
+    count(:conditions => ['nct_id is not null and nct_id != ""'])
+  end    
+  
+  def self.ctg_and_istcrn_count
+    count(:conditions => ['isrctn_id is not null and isrctn_id != "" and nct_id is not null and nct_id != ""'])
+  end  
 end

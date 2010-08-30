@@ -86,3 +86,37 @@ ul.nav li input {
 .condition-link {
   padding: 0.4em;
 }
+
+/* Statistics */
+
+#content-container {
+	float: left;
+	width: 100%;
+}
+
+#left-hand-column {
+  clear: left;
+	float: left;
+	width: 45%;
+	padding: 5px;
+	margin: 0 0 0 4%;
+	display: inline;
+}
+
+#right-hand-column {
+  float: right;
+	width: 45%;
+	padding: 5px;
+	margin: 0 3% 0 0;
+	display: inline;
+}
+
+.statistics-box {
+  padding: 0.5em;
+  margin: 0 0 1em 0;
+  border: solid 1px #c0c0c0;
+}
+
+.statistics-box li {
+  margin: 0.5em;
+}
