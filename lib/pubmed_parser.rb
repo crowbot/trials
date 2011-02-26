@@ -11,7 +11,7 @@ class PubmedParser < UrlParser
     if !identifier.blank?
       request_path = "#{@pubmed_base_path}#{CGI.escape("\"#{identifier}\"")}"
       puts "Search with #{identifier_field} #{identifier}"
-      response = request_page(request_path) 
+      response = get_local_file(request_path) 
       return parse_response(response)
     end
     return []
@@ -32,6 +32,7 @@ class PubmedParser < UrlParser
     doc = Hpricot::XML(response)
     pubmed_ids = []
     # don't count results where the identifier got broken up and re searched as component parts
+    print 
     if (doc/:QuotedPhraseNotFound).empty?
       (doc/:Id).each do |id|
         puts "Adding #{id.inner_text.strip}"
