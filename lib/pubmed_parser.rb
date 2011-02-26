@@ -9,7 +9,6 @@ class PubmedParser < UrlParser
   
   def search_for_identifier identifier_field, identifier
     if !identifier.blank?
-      sleep(3)
       request_path = "#{@pubmed_base_path}#{CGI.escape("\"#{identifier}\"")}"
       puts "Search with #{identifier_field} #{identifier}"
       response = request_page(request_path) 
