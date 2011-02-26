@@ -4,7 +4,7 @@ require 'hpricot'
 class UrlParser 
   
   def request_page(request_path)
-    sleep(0.5)
+    sleep(0.3)
     http_client = HTTPClient.new
     url = "http://#{base_host}#{request_path}"
     # puts url
