@@ -49,7 +49,7 @@ namespace :pubmed do
     outfile = File.open("#{RAILS_ROOT}/data/nct_ids_from_xml.tsv", 'w')
     outfile.write(["NCT ID", "NCT alias"].join("\t")+"\n")
     files.each do |file|
-      attributes = trials_parser.get_trial_attributes(file)
+      attributes = trials_parser.get_trial_attributes(file,nct_only=true)
       # print attributes[:nct_id]
       # print attributes[:nct_aliases]
       i += 1
