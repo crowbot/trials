@@ -7,7 +7,7 @@ class UrlParser
     sleep(0.5)
     http_client = HTTPClient.new
     url = "http://#{base_host}#{request_path}"
-    puts url
+    # puts url
     content = http_client.get_content(url)
     return content
   end
