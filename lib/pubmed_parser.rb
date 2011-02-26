@@ -12,7 +12,7 @@ class PubmedParser < UrlParser
       request_path = "#{@pubmed_base_path}#{CGI.escape("\"#{identifier}\"")}"
       puts "Search with #{identifier_field} #{identifier}"
       response = get_local_file(request_path) 
-      return parse_response(response)
+      return parse_response(File.read(response))
     end
     return []
   end
