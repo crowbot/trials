@@ -47,14 +47,16 @@ namespace :pubmed do
     files = Dir.glob(File.join(directory, "*.xml"))
     i = 0
     outfile = File.open("#{RAILS_ROOT}/data/nct_ids_from_xml.tsv", 'w')
-    outfile.write(["NCT ID", "NCT alias"].join("\t")+"\n")
+    outfile.write(["NCT ID", "Org Study ID", "Secondary IDs", "NCT aliases"].join("\t")+"\n")
     files.each do |file|
-      attributes = trials_parser.get_trial_attributes(file,nct_only=true)
-      # print attributes[:nct_id]
-      # print attributes[:nct_aliases]
+      attributes = trials_parser.get_trial_attributes(file,only_nct=true)
+   
       i += 1
       puts i
-      outfile.write([attributes[:nct_id], attributes[:nct_aliases]].join("\t")+"\n")
+      outfile.write([attributes[:nct_id], 
+                     attributes[:org_study_id],
+                     attributes[:secondary_ids], 
+                     attributes[:nct_aliases]].join("\t")+"\n")
       STDOUT.flush
     end
     outfile.close()

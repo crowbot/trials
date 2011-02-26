@@ -25,13 +25,14 @@ class TrialsParser
     xml = File.read(file_path)
     doc = Hpricot::XML(xml)
     nct_id = (doc/:id_info/:nct_id).text
+    secondary_ids = doc.search('secondary_id').map{ |secondary_id_element| secondary_id_element.inner_text }.join(",")
     
     nct_aliases = doc.search('nct_alias').map{ |nct_alias| nct_alias.inner_text }.join(",")
+    org_study_id = (doc/:org_study_id).text
     if ! only_nct
       url = (doc/:required_header/:url).text
       download_date = (doc/:required_header/:download_date).text
-      org_study_id = (doc/:org_study_id).text
-      secondary_ids = doc.search('secondary_id').map{ |secondary_id_element| secondary_id_element.inner_text }.join(",")
+      
       brief_title = (doc/:brief_title).text
       official_title = (doc/:official_title).text
       source = (doc/:source).text
@@ -74,14 +75,15 @@ class TrialsParser
       firstreceived_date = doc.at('firstreceived_date') ? doc.at('firstreceived_date').inner_text : nil
       lastchanged_date = doc.at('lastchanged_date') ? doc.at('lastchanged_date').inner_text : nil
     end
-    if nct_only
+    if only_nct
       trial_attributes = { :nct_id => nct_id,
-                           :nct_aliases => nct_aliases }
+                           :org_study_id => org_study_id, 
+                           :nct_aliases => nct_aliases,
+                           :secondary_ids => secondary_ids }
     else
       trial_attributes = {:url => url,
                           :download_date => download_date,
                          :nct_id => nct_id,
-                         :secondary_ids => secondary_ids,
                          :org_study_id => org_study_id,
                          :nct_aliases => nct_aliases,
                          :brief_title => brief_title,
