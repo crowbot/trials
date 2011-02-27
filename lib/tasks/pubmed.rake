@@ -24,8 +24,8 @@ namespace :pubmed do
       next if index == 0
       trial_data = line.strip.split("\t")
       nct_id = trial_data[0]
-      pubmed_ids = trial_data.last
-      get_info_for_ids(pubmed_ids)
+      pubmed_ids = trial_data[2]
+      pubmed_parser.get_info_for_ids(pubmed_ids)
     end
   end
   
