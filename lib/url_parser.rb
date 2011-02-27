@@ -1,5 +1,6 @@
 require 'httpclient'
 require 'hpricot'
+require 'Digest'
 
 class UrlParser 
   
@@ -7,7 +8,7 @@ class UrlParser
     sleep(0.3)
     http_client = HTTPClient.new
     url = "http://#{base_host}#{request_path}"
-    # puts url
+    puts url
     content = http_client.get_content(url)
     return content
   end
@@ -21,6 +22,12 @@ class UrlParser
     page = page.gsub(/^\//, '')
     request_path = "/#{page}"
     local_path = "#{data_dir}#{page}.html"
+    filename = File.basename(local_path)
+    dirname = File.dirname(local_path)
+    if filename.size > 100
+      local_path = File.join(pathname, Digest::SHA1.hexdigest(filename))
+      print local_path
+    end
     local_file = File.exist?(local_path)   
     return local_path if local_file 
      
