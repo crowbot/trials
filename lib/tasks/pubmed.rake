@@ -16,6 +16,19 @@ namespace :pubmed do
     end 
   end
   
+  desc "Get pubmed info on articles related to clinical trials"
+  task :get_pubmed_info_for_trials => :environment do 
+    pubmed_parser = PubmedParser.new
+    infile = File.open(ENV['INFILE'])
+    infile.each_with_index do |line,index|
+      next if index == 0
+      trial_data = line.strip.split("\t")
+      nct_id = trial_data[0]
+      pubmed_ids = trial_data.last
+      get_info_for_ids(pubmed_ids)
+    end
+  end
+  
   desc "Search pubmed for articles related to clinical trials from the original XML downloads"
   task :search_from_file => :environment do 
     pubmed_parser = PubmedParser.new

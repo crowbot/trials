@@ -3,18 +3,27 @@ class PubmedParser < UrlParser
   attr_accessor :base_host
   
   def initialize
-    @pubmed_base_path = "/entrez/eutils/esearch.fcgi?tool=trialsearch&email=louise.crow@gmail.com&db=pubmed&retmax=100&term="
+    @search_base_path = "/entrez/eutils/esearch.fcgi?tool=trialsearch&email=louise.crow@gmail.com&db=pubmed&retmax=100&term="
+    @fetch_base_path = "/entrez/eutils/efetch.fcgi?db=pubmed&retmode=xml&id="
     @base_host = 'eutils.ncbi.nlm.nih.gov'
   end
   
-  def search_for_identifier identifier_field, identifier
+  def search_for_identifier(identifier_field, identifier)
     if !identifier.blank?
-      request_path = "#{@pubmed_base_path}#{CGI.escape("\"#{identifier}\"")}"
+      request_path = "#{@search_base_path}#{CGI.escape("\"#{identifier}\"")}"
       puts "Search with #{identifier_field} #{identifier}"
       response = get_local_file(request_path) 
-      return parse_response(File.read(response))
+      return parse_search_response(File.read(response))
     end
     return []
+  end
+  
+  def get_info_for_ids(ids)
+    if !ids.blank?
+      request_path = "#{@fetch_base_path}#{ids}"
+      puts "Search for #{ids}"
+      response = get_local_file(request_path)
+    end
   end
   
   def search_for_trial(trial)
@@ -28,7 +37,7 @@ class PubmedParser < UrlParser
     return pubmed_ids
   end
   
-  def parse_response(response)
+  def parse_search_response(response)
     doc = Hpricot::XML(response)
     pubmed_ids = []
     # don't count results where the identifier got broken up and re searched as component parts
