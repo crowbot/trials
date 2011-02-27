@@ -25,7 +25,7 @@ class UrlParser
     filename = File.basename(local_path)
     dirname = File.dirname(local_path)
     if filename.size > 100
-      local_path = File.join(pathname, Digest::SHA1.hexdigest(filename))
+      local_path = File.join(dirname, Digest::SHA1.hexdigest(filename))
       print local_path
     end
     local_file = File.exist?(local_path)   
