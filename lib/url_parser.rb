@@ -1,6 +1,6 @@
 require 'httpclient'
 require 'hpricot'
-require 'Digest'
+require 'digest/sha1'
 
 class UrlParser 
   
