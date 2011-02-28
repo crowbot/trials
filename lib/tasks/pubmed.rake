@@ -20,14 +20,50 @@ namespace :pubmed do
   task :get_pubmed_info_for_trials => :environment do 
     pubmed_parser = PubmedParser.new
     infile = File.open(ENV['INFILE'])
+    outfile = File.open(ENV['OUTFILE'], 'w')
+    pubmed_events = ['received', 'revised', 'accepted', 'entrez', 'pubmed', 'medline', 'aheadofprint', 'epublish', 'pmc-release']
+    headers = ['PMID', 'Journal issue publication date' 'Article Date' ]
+    pubmed_events.each do |event_type|
+      headers << "PubMed Date: #{event_type}"
+    end
     infile.each_with_index do |line,index|
       next if index == 0
       trial_data = line.strip.split("\t")
       nct_id = trial_data[0]
       pubmed_ids = trial_data[2]
-      pubmed_parser.get_info_for_ids(pubmed_ids)
+      ids_to_dates = pubmed_parser.get_info_for_ids(pubmed_ids)
+      ids_to_dates.each do |pmid,dates|
+        columns = [pmid, dates[:issue_pub_date]]
+        if !dates[:article_dates] or dates[:article_dates].size == 0
+          columns << ''
+        elsif dates[:article_dates].size > 1 or dates[:article_dates].first[:type] != 'Electronic'
+          raise "#{pmid}: Unexpected values for article dates #{dates[:article_dates].inspect}"
+        else
+          article_date = dates[:article_dates].first
+          columns << "#{article_date[:year]}-#{article_date[:month]}-#{article_date[:day]}"          
+        end
+        pubmed_events.each do |event_type|
+          events_of_type = dates[:pubmed_dates].select{ |date_attrs| date_attrs[:type] == event_type }
+          if events_of_type.size > 1
+            raise "#{pmid}: More than one pubmed event of type #{event_type}"
+          elsif events_of_type.size < 1
+            columns << ''
+          else
+            event = events_of_type.first
+            columns << "#{event[:year]}-#{event[:month]}-#{event[:day]}"
+          end
+        end
+        unknown_events = dates[:pubmed_dates].select{ |date_attrs| ! pubmed_events.include? date_attrs[:type] }
+        if unknown_events.size > 0
+          raise "#{pmid}: Unknown pubmed event types #{unknown_events.map{|event| event[:type]}.join(",")}"
+        end
+        outfile.write(columns.join("\t") + "\n")
+      end
     end
+    infile.close
+    outfile.close
   end
+  
   
   desc "Search pubmed for articles related to clinical trials from the original XML downloads"
   task :search_from_file => :environment do 
