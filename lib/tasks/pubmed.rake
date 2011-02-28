@@ -44,13 +44,10 @@ namespace :pubmed do
         end
         pubmed_events.each do |event_type|
           events_of_type = dates[:pubmed_dates].select{ |date_attrs| date_attrs[:type] == event_type }
-          if events_of_type.size > 1
-            raise "#{pmid}: More than one pubmed event of type #{event_type}"
-          elsif events_of_type.size < 1
-            columns << ''
+          if events_of_type.size > 0
+            columns << events_of_type.map{ |event| "#{event[:year]}-#{event[:month]}-#{event[:day]}" }.join(',')
           else
-            event = events_of_type.first
-            columns << "#{event[:year]}-#{event[:month]}-#{event[:day]}"
+            columns << ''
           end
         end
         unknown_events = dates[:pubmed_dates].select{ |date_attrs| ! pubmed_events.include? date_attrs[:type] }
