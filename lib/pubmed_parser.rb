@@ -78,7 +78,9 @@ class PubmedParser < UrlParser
         pubmed_date[:month] = pubmed_date_element.at('Month').inner_html
         pubmed_date[:day] = pubmed_date_element.at('Day').inner_html
         pubmed_date[:minute] = pubmed_date_element.at('Minute') ? pubmed_date_element.at('Minute').inner_html : nil
-        pubmed_dates << pubmed_date
+        if !pubmed_dates.include?(pubmed_date)
+          pubmed_dates << pubmed_date
+        end
       end
       ids_to_dates[pmid][:pubmed_dates] = pubmed_dates
       
