@@ -21,7 +21,16 @@ namespace :pubmed do
     pubmed_parser = PubmedParser.new
     infile = File.open(ENV['INFILE'])
     outfile = File.open(ENV['OUTFILE'], 'w')
-    pubmed_events = ['received', 'revised', 'accepted', 'entrez', 'pubmed', 'medline', 'aheadofprint', 'epublish', 'pmc-release']
+    pubmed_events = ['received', 
+                     'revised', 
+                     'accepted', 
+                     'entrez', 
+                     'pubmed', 
+                     'medline', 
+                     'aheadofprint', 
+                     'ppublish', 
+                     'epublish', 
+                     'pmc-release']
     headers = ['PMID', 'Journal issue publication date' 'Article Date' ]
     pubmed_events.each do |event_type|
       headers << "PubMed Date: #{event_type}"
