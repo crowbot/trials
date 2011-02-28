@@ -35,6 +35,7 @@ namespace :pubmed do
     pubmed_events.each do |event_type|
       headers << "PubMed Date: #{event_type}"
     end
+    outfile.write(headers.join("\t") + "\n")
     infile.each_with_index do |line,index|
       next if index == 0
       trial_data = line.strip.split("\t")
@@ -42,13 +43,22 @@ namespace :pubmed do
       pubmed_ids = trial_data[2]
       ids_to_dates = pubmed_parser.get_info_for_ids(pubmed_ids)
       ids_to_dates.each do |pmid,dates|
-        columns = [pmid, dates[:issue_pub_date]]
+        
+        columns = [pmid]
+        issue_date = dates[:issue_pub_date]
+        if issue_date[:medline_date]
+          columns << issue_date[:medline_date]
+        elsif issue_date[:year]
+          vals = [issue_date[:day], issue_date[:month], issue_date[:season], issue_date[:year]].compact
+          columns << "#{vals.join(" ")}"
+        end
         if !dates[:article_dates] or dates[:article_dates].size == 0
           columns << ''
         elsif dates[:article_dates].size > 1 or dates[:article_dates].first[:type] != 'Electronic'
           raise "#{pmid}: Unexpected values for article dates #{dates[:article_dates].inspect}"
         else
           article_date = dates[:article_dates].first
+          puts "#{article_date[:year]}-#{article_date[:month]}-#{article_date[:day]}"    
           columns << "#{article_date[:year]}-#{article_date[:month]}-#{article_date[:day]}"          
         end
         pubmed_events.each do |event_type|
