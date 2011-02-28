@@ -31,7 +31,7 @@ namespace :pubmed do
                      'ppublish', 
                      'epublish', 
                      'pmc-release']
-    headers = ['PMID', 'Journal issue publication date' 'Article Date' ]
+    headers = ['PMID', 'Journal issue publication date','Article Date' ]
     pubmed_events.each do |event_type|
       headers << "PubMed Date: #{event_type}"
     end
@@ -58,7 +58,6 @@ namespace :pubmed do
           raise "#{pmid}: Unexpected values for article dates #{dates[:article_dates].inspect}"
         else
           article_date = dates[:article_dates].first
-          puts "#{article_date[:year]}-#{article_date[:month]}-#{article_date[:day]}"    
           columns << "#{article_date[:year]}-#{article_date[:month]}-#{article_date[:day]}"          
         end
         pubmed_events.each do |event_type|
